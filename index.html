@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Amazon Vine Link Launcher</title>
   <style>
     body {
@@ -9,8 +10,9 @@
       color: white;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding-top: 80px;
+      padding-top: 130px; /* Adjusted for fixed header and search */
       text-align: center;
+      font-size: 16px; /* Base font size for larger screens */
     }
     h1, h2 {
       color: #FF9900;
@@ -23,34 +25,59 @@
       background-color: #111;
       padding: 15px 20px;
       display: flex;
+      flex-wrap: wrap; /* Allow items to wrap on smaller screens */
       align-items: center;
       justify-content: space-around;
       z-index: 9999;
       box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     }
     .sticky-header select, .sticky-header button, .sticky-header a {
-      font-size: 1em;
+      font-size: 1em; /* Relative to parent/body font size */
       padding: 8px 12px;
       border: none;
       border-radius: 6px;
-      margin: 0 5px;
+      margin: 5px; /* Adjusted margin for better spacing */
+      flex-shrink: 0; /* Prevent items from shrinking */
     }
     .sticky-header select {
       background: #FF9900;
       color: white;
+      cursor: pointer;
     }
     .sticky-header button {
       background-color: #FF9900;
       color: white;
       cursor: pointer;
+      transition: background-color 0.2s ease;
     }
     .sticky-header a {
       background-color: #37475A;
       color: #00ccff;
       text-decoration: none;
+      transition: background-color 0.2s ease;
     }
-    .sticky-header button:hover {
+    .sticky-header button:hover, .sticky-header a:hover {
       background-color: #cc7a00;
+    }
+    .search-container {
+      position: fixed;
+      top: 70px; /* Below the main header */
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background: #232F3E;
+      z-index: 9998;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    #searchBox {
+      width: 60%;
+      max-width: 500px; /* Limit search box width */
+      padding: 10px;
+      font-size: 1em; /* Relative to parent/body font size */
+      border-radius: 6px;
+      border: none;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+      color: #333;
     }
     .category {
       background: #37475A;
@@ -63,20 +90,102 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
     .category h3 {
+      margin-top: 0;
       margin-bottom: 10px;
       border-bottom: 1px solid #FF9900;
       padding-bottom: 5px;
       cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2em; /* Slightly larger for headings */
+    }
+    /* Modified: Arrow now points up by default */
+    .category h3::after {
+        content: '▲'; /* Up arrow for expanded */
+        margin-left: 10px;
+        transition: transform 0.2s ease;
+        transform: rotate(0deg); /* Initial state for animation */
+    }
+    /* Modified: Arrow points down when collapsed */
+    .category:not(.expanded) h3::after {
+        content: '▼'; /* Down arrow for collapsed */
+        transform: rotate(180deg);
     }
     .links {
-      display: block;
+      /* Removed 'display: none;' here so they are visible by default */
       margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255,255,255,0.2);
+    }
+    /* Added display property for collapsed state */
+    .category:not(.expanded) .links {
+        display: none;
     }
     .link-item {
       color: #00ccff;
       display: block;
       margin: 4px 0 4px 20px;
       text-decoration: none;
+      transition: color 0.2s ease;
+      font-size: 1em; /* Relative to parent/body font size */
+    }
+    .link-item:hover {
+      color: #66e0ff;
+      text-decoration: underline;
+    }
+    .info-message {
+        background-color: #4CAF50; /* Green */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+        display: none; /* Hidden by default */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        font-size: 1em;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        body {
+            font-size: 18px; /* Larger base font size for mobile */
+            padding-top: 180px; /* Adjust padding for smaller screens */
+        }
+        h1 {
+            font-size: 2em; /* Larger heading */
+        }
+        p {
+            font-size: 1.1em; /* Larger paragraph text */
+        }
+        .sticky-header {
+            flex-direction: column;
+            padding: 10px;
+        }
+        .sticky-header select, .sticky-header button, .sticky-header a {
+            margin: 5px 0;
+            width: 90%;
+            text-align: center;
+            font-size: 1.1em; /* Larger buttons/select */
+        }
+        .search-container {
+            top: 100px; /* Adjust if header takes more space */
+        }
+        #searchBox {
+            width: 90%;
+            font-size: 1.1em; /* Larger search box text */
+        }
+        .category h3 {
+            font-size: 1.3em; /* Larger category headings */
+        }
+        .link-item {
+            font-size: 1.1em; /* Larger link items */
+        }
+        .info-message {
+            font-size: 1.1em;
+        }
     }
   </style>
 </head>
@@ -92,56 +201,83 @@
     <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
+    <button onclick="copyAllLinks()">Copy All Links</button>
   </div>
 
-  <div style="position:fixed;top:60px;width:100%;text-align:center;padding:5px;background:#232F3E;z-index:9998;">
-    <input type="text" id="searchBox" onkeydown="searchAmazon(event)" placeholder="Search Vine on Amazon..." style="width:60%;padding:10px;font-size:16px;border-radius:6px;border:none;">
+  <div class="search-container">
+    <input type="text" id="searchBox" onkeydown="searchAmazon(event)" placeholder="Search Vine on Amazon...">
   </div>
 
   <h1>Amazon Vine Link Launcher</h1>
-  <p>Select delay, then click a category name to launch all its links.</p>
+  <p><strong>Select your desired delay, then click a category name to launch all its links in new tabs.</strong></p>
+  <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFL, and AI.</p>
 
   <div id="categories"></div>
 
-  <script>
-    function searchAmazon(e) {
-      if (e.key === 'Enter') {
-        const term = document.getElementById('searchBox').value.trim();
-        if (!term) return;
-        const formatted = encodeURIComponent(term);
-        window.open(`https://www.amazon.com/vine/vine-items?search=${formatted}`, '_blank');
-      }
-    }
+  <div id="infoMessage" class="info-message"></div>
 
+  <script>
+    // Defines the categories and their associated search terms.
+    // Each inner array contains [displayLabel, URLencodedSearchTerm].
     const categories = {
+      "✨ Zero ETV Focus": [
+        ["Supplements", "Supplements"], ["Vitamins", "Vitamins"], ["Gummies", "Gummies"],
+        ["Shampoo", "Shampoo"], ["Conditioner", "Conditioner"], ["Lotion", "Lotion"],
+        ["Makeup", "Makeup"], ["Skincare", "Skincare"], ["Face Mask", "Face%20Mask"],
+        ["Bandages", "Bandages"], ["Brace", "Brace"], ["Reading Glasses", "Reading%20glasses"],
+        ["Coffee", "Coffee"], ["Tea", "Tea"], ["Snacks", "Snacks"],
+        ["Pet Food", "Pet%20Food"], ["Pet Treats", "Pet%20Treats"], ["Diapers", "Diapers"],
+        ["Wipes", "Wipes"], ["Lubricant", "Lubricant"], ["Massager", "Massager"]
+      ],
       "🚗 Automotive & Powersports": [
         ["Camry 2011", "Camry%202011"], ["Civic 2006", "Civic%202006"], ["CR-V 2007", "CR-V%202007"],
         ["Express 1500", "Express%201500"], ["Dash Cam", "Dash%20cam"], ["Wiper", "Wiper"],
         ["Relay Switch", "Relay%20switch"], ["TRX250EX", "TRX250EX"], ["Sportsman 570", "Sportsman%20570"],
-        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"]
+        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"],
+        // Added automotive and powersports items:
+        ["Car Organizer", "Car%20Organizer"], ["Tire Pressure Monitor", "Tire%20Pressure%20Monitor"],
+        ["Jump Starter Cable", "Jump%20Starter%20Cable"], ["Car Cover", "Car%20Cover"],
+        ["Motorcycle Phone Mount", "Motorcycle%20Phone%20Mount"], ["ATV Winch", "ATV%20Winch"],
+        ["Car Cleaning Kit", "Car%20Cleaning%20Kit"], ["LED Headlight", "LED%20Headlight"]
       ],
       "🧰 Tools & Home Improvement": [
         ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
-        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"]
+        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"],
+        ["Electric Kettle", "Electric%20Kettle"], ["Smart Lighting", "Smart%20Lighting"], ["Cookware", "Cookware"]
       ],
       "📱 Tech & Electronics": [
         ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
         ["Robotic", "Robotic"], ["Bluetooth", "Bluetooth"], ["HDMI", "HDMI"],
         ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
-        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"]
+        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"],
+        ["Webcam", "Webcam"], ["Microphone", "Microphone"], ["Monitor Stand", "Monitor%20Stand"],
+        ["Wi-Fi Extender", "Wi-Fi%20Extender"]
       ],
       "🧔 Grooming & Personal Care": [
-        ["Shaver", "Shaver"], ["Bald", "Bald"]
+        ["Shaver", "Shaver"], ["Bald", "Bald"], ["Hair Dryer", "Hair%20Dryer"], ["Curling Iron", "Curling%20Iron"]
       ],
       "👓 Vision & Eyewear": [
         ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"]
       ],
       "🍬 Health & Wellness": [
         ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
-        ["Sex", "Sex"], ["Vitamin", "Vitamin"]
+        ["Sex", "Sex"], ["Vitamin", "Vitamin"], ["Blood Pressure Monitor", "Blood%20Pressure%20Monitor"],
+        ["Thermometer", "Thermometer"], ["First Aid", "First%20Aid"], ["Brace", "Brace"]
       ],
       "☀️ Outdoors & Solar": [
-        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"]
+        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"],
+        ["Camping", "Camping"], ["Hiking", "Hiking"]
+      ],
+      "🐾 Pet Care": [
+        ["Cat Tree", "Cat%20Tree"], ["Dog Bed", "Dog%20Bed"], ["Pet Camera", "Pet%20Camera"],
+        ["Pet Feeder", "Pet%20Feeder"], ["Water Fountain (Pet)", "Water%20Fountain%20Pet"],
+        ["Dog Toys", "Dog%20Toys"], ["Cat Toys", "Cat%20Toys"], ["Pet Grooming", "Pet%20Grooming"],
+        ["Poop Bags", "Poop%20Bags"]
+      ],
+      "👶 Baby & Kids": [
+        ["Baby Monitor", "Baby%20Monitor"], ["Baby Carrier", "Baby%20Carrier"], ["Stroller Organizer", "Stroller%20Organizer"],
+        ["Diaper Bag", "Diaper%20Bag"], ["Kids Toys", "Kids%20Toys"], ["Baby Clothes", "Baby%20Clothes"],
+        ["Infant Seat", "Infant%20Seat"], ["Baby Gate", "Baby%20Gate"]
       ],
       "🏷️ Name Brands": [
         ["Sony", "Sony"], ["Samsung", "Samsung"], ["LG", "LG"], ["Apple", "Apple"], ["Anker", "Anker"],
@@ -156,17 +292,156 @@
     };
 
     const container = document.getElementById("categories");
+    const infoMessageElement = document.getElementById("infoMessage");
+
+    /**
+     * Displays a temporary info message to the user.
+     * @param {string} message - The message to display.
+     * @param {number} duration - How long to display the message in milliseconds.
+     */
+    function showInfoMessage(message, duration = 3000) {
+      infoMessageElement.textContent = message;
+      infoMessageElement.style.display = 'block';
+      setTimeout(() => {
+        infoMessageElement.style.display = 'none';
+      }, duration);
+    }
+
+    /**
+     * Handles Amazon search when Enter key is pressed in the search box.
+     * @param {KeyboardEvent} e - The keyboard event object.
+     */
+    function searchAmazon(e) {
+      if (e.key === 'Enter') {
+        const term = document.getElementById('searchBox').value.trim();
+        if (!term) {
+            showInfoMessage("Please enter a search term.", 2000);
+            return;
+        }
+        const formatted = encodeURIComponent(term);
+        window.open(`https://www.amazon.com/vine/vine-items?search=${formatted}`, '_blank');
+        showInfoMessage(`Searching Amazon Vine for "${term}"...`);
+      }
+    }
+
+    /**
+     * Gets the selected delay value from the dropdown.
+     * If "random" is selected, returns a random delay between 4 and 10 seconds.
+     * @returns {number} The delay in milliseconds.
+     */
+    function getDelayValue() {
+      const delaySetting = document.getElementById("delay").value;
+      if (delaySetting === "random") {
+        return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
+      }
+      return parseInt(delaySetting, 10);
+    }
+
+    /**
+     * Launches all links within a specific category with the chosen delay.
+     * @param {Array<Array<string>>} items - An array of [label, slug] pairs for the category.
+     * @param {string} categoryTitle - The title of the category for the info message.
+     */
+    function launchCategory(items, categoryTitle) {
+      showInfoMessage(`Launching all links for "${categoryTitle}" with delays...`);
+      let totalDelay = 0;
+      items.forEach(([_, slug]) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const delay = getDelayValue();
+        setTimeout(() => window.open(url, '_blank'), totalDelay);
+        totalDelay += delay;
+      });
+    }
+
+    /**
+     * Launches all links from all categories with the chosen delay.
+     */
+    function launchAll() {
+      showInfoMessage("Launching all stored links with delays. This may take a while...", 5000);
+      let totalDelay = 0;
+      Object.values(categories).flat().forEach(([_, slug]) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const delay = getDelayValue();
+        setTimeout(() => window.open(url, '_blank'), totalDelay);
+        totalDelay += delay;
+      });
+    }
+
+    /**
+     * Toggles the visibility of links within a category and updates its expanded state.
+     * @param {HTMLElement} categoryDiv - The div element representing the category.
+     */
+    function toggleCategory(categoryDiv) {
+        categoryDiv.classList.toggle('expanded');
+        // The display logic is now handled by CSS based on the 'expanded' class.
+        // We only need to ensure scrolling if it's being expanded.
+        if (categoryDiv.classList.contains('expanded')) {
+            categoryDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    /**
+     * Copies all generated Amazon Vine search links to the clipboard.
+     */
+    function copyAllLinks() {
+        const allLinks = Object.values(categories)
+                               .flat()
+                               .map(([_, slug]) => `https://www.amazon.com/vine/vine-items?search=${slug}`);
+        const linksText = allLinks.join('\n');
+
+        // Use document.execCommand('copy') for better iframe compatibility
+        const textarea = document.createElement('textarea');
+        textarea.value = linksText;
+        textarea.style.position = 'fixed'; // Prevents scrolling to bottom of page
+        textarea.style.opacity = '0'; // Makes it invisible
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showInfoMessage("All links copied to clipboard!");
+            } else {
+                showInfoMessage("Failed to copy links. Please try again or copy manually.");
+            }
+        } catch (err) {
+            console.error('Failed to copy links: ', err);
+            showInfoMessage("Failed to copy links. Your browser might not support automatic copying in this context.");
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+
+    // --- Page Initialization ---
+    // Dynamically creates and appends category sections to the page.
     for (const [title, items] of Object.entries(categories)) {
       const div = document.createElement("div");
-      div.className = "category";
+      // Add 'expanded' class by default
+      div.className = "category expanded";
 
       const h3 = document.createElement("h3");
-      h3.textContent = title + " [click to launch all]";
-      h3.onclick = () => launchCategory(items);
+      h3.textContent = title; // Text content without the "[click to launch all]"
+      // Add a span for the "click to launch all" instruction that's visible
+      const launchInstruction = document.createElement("span");
+      launchInstruction.textContent = " [click to launch all]";
+      launchInstruction.style.fontSize = '0.8em';
+      launchInstruction.style.color = '#ccc';
+      h3.appendChild(launchInstruction);
+
+      // Event listener for toggling visibility
+      h3.onclick = (event) => {
+        // If the direct target is the launch instruction, launch all.
+        // Otherwise, toggle the category's links.
+        if (event.target === launchInstruction) {
+          launchCategory(items, title);
+        } else {
+          toggleCategory(div);
+        }
+      };
       div.appendChild(h3);
 
       const linksDiv = document.createElement("div");
-      linksDiv.className = "links";
+      linksDiv.className = "links"; // No initial display:none; here in JS
 
       items.forEach(([label, slug]) => {
         const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
@@ -180,32 +455,6 @@
 
       div.appendChild(linksDiv);
       container.appendChild(div);
-    }
-
-    function getDelayValue(i) {
-      const delaySetting = document.getElementById("delay").value;
-      if (delaySetting === "random") {
-        return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
-      }
-      return parseInt(delaySetting);
-    }
-
-    function launchCategory(items) {
-      let totalDelay = 0;
-      items.forEach(([_, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const delay = getDelayValue();
-        setTimeout(() => window.open(url, '_blank'), totalDelay);
-        totalDelay += delay;
-      });
-    }
-
-    function launchAll() {
-      Object.values(categories).flat().forEach(([_, slug], i) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const delay = getDelayValue(i);
-        setTimeout(() => window.open(url, '_blank'), i * delay);
-      });
     }
   </script>
 </body>
