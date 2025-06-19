@@ -167,58 +167,6 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         font-size: 1em;
     }
-    /* Modal styles */
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-        backdrop-filter: blur(5px); /* Optional blur effect */
-    }
-    .modal-content {
-        background-color: #37475A;
-        color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        max-width: 500px;
-        text-align: center;
-        position: relative;
-        font-size: 1.1em;
-        line-height: 1.5;
-        border: 2px solid #FF9900;
-    }
-    .modal-content p {
-        margin-bottom: 20px;
-        color: white; /* Ensure text color is visible */
-    }
-    .modal-close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #FF9900;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        font-size: 1.2em;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .modal-close-button:hover {
-        background-color: #cc7a00;
-    }
-
     /* Responsive adjustments */
     @media (max-width: 768px) {
         body {
@@ -257,11 +205,6 @@
         .info-message {
             font-size: 1.1em;
         }
-        .modal-content {
-            margin: 20px;
-            padding: 20px;
-            font-size: 1em;
-        }
     }
   </style>
 </head>
@@ -270,20 +213,6 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-
-  <!-- Popup Modal for Reddit Post Update -->
-  <div id="redditPostModal" class="modal-backdrop" style="display: none;">
-    <div class="modal-content">
-      <button class="modal-close-button" onclick="hideRedditPostModal()">X</button>
-      <p>Hey everyone,</p>
-      <p>Quick update regarding my Amazon Vine Link Launcher post. It seems the Reddit moderators took it down (my apologies if it caused any issues for the mods or the community, completely unintentional!).</p>
-      <p>However, knowing this community, I'm pretty sure many of you saved the link and are probably still finding it useful for those daily Vine hunts. 😉</p>
-      <p>Sorry for any confusion, but glad if the tool is helping you streamline your process!</p>
-      <p>Happy Vining!</p>
-    </div>
-  </div>
-  <!-- End Popup Modal -->
-
   <div class="sticky-header">
     <select id="delay">
       <option value="5000">5s Delay</option>
@@ -387,7 +316,6 @@
 
     const container = document.getElementById("categories");
     const infoMessageElement = document.getElementById("infoMessage");
-    const redditPostModal = document.getElementById("redditPostModal");
 
     /**
      * Displays a temporary info message to the user.
@@ -475,21 +403,7 @@
         }
     }
 
-    /**
-     * Shows the Reddit post modal.
-     */
-    function showRedditPostModal() {
-        redditPostModal.style.display = 'flex';
-    }
-
-    /**
-     * Hides the Reddit post modal.
-     */
-    function hideRedditPostModal() {
-        redditPostModal.style.display = 'none';
-        // Set a flag in session storage so it doesn't show again in the same session
-        sessionStorage.setItem('redditModalShown', 'true');
-    }
+    // Removed copyAllLinks function as the button has been removed.
 
     // --- Page Initialization ---
     // Dynamically creates and appends category sections to the page.
@@ -535,13 +449,6 @@
       div.appendChild(linksDiv);
       container.appendChild(div);
     }
-
-    // Show the modal after the page loads if it hasn't been shown yet in this session
-    window.onload = () => {
-      if (!sessionStorage.getItem('redditModalShown')) {
-        showRedditPostModal();
-      }
-    };
   </script>
 </body>
 </html>
