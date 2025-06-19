@@ -152,7 +152,7 @@
     @media (max-width: 768px) {
         body {
             font-size: 18px; /* Larger base font size for mobile */
-            padding-top: 180px; /* Adjust padding for smaller screens */
+            padding-top: 190px; /* Increased padding-top for mobile to accommodate both fixed bars */
         }
         h1 {
             font-size: 2em; /* Larger heading */
@@ -161,7 +161,7 @@
             font-size: 1.1em; /* Larger paragraph text */
         }
         .sticky-header {
-            flex-direction: column;
+            flex-direction: column; /* Stack items vertically */
             padding: 10px;
         }
         .sticky-header select, .sticky-header button, .sticky-header a {
@@ -171,7 +171,7 @@
             font-size: 1.1em; /* Larger buttons/select */
         }
         .search-container {
-            top: 100px; /* Adjust if header takes more space */
+            top: 150px; /* Adjusted top to be below the potentially taller sticky header on mobile */
         }
         #searchBox {
             width: 90%;
@@ -201,7 +201,7 @@
     <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
-    <button onclick="copyAllLinks()">Copy All Links</button>
+    <!-- Removed "Copy All Links" button as requested -->
   </div>
 
   <div class="search-container">
@@ -380,37 +380,7 @@
         }
     }
 
-    /**
-     * Copies all generated Amazon Vine search links to the clipboard.
-     */
-    function copyAllLinks() {
-        const allLinks = Object.values(categories)
-                               .flat()
-                               .map(([_, slug]) => `https://www.amazon.com/vine/vine-items?search=${slug}`);
-        const linksText = allLinks.join('\n');
-
-        // Use document.execCommand('copy') for better iframe compatibility
-        const textarea = document.createElement('textarea');
-        textarea.value = linksText;
-        textarea.style.position = 'fixed'; // Prevents scrolling to bottom of page
-        textarea.style.opacity = '0'; // Makes it invisible
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                showInfoMessage("All links copied to clipboard!");
-            } else {
-                showInfoMessage("Failed to copy links. Please try again or copy manually.");
-            }
-        } catch (err) {
-            console.error('Failed to copy links: ', err);
-            showInfoMessage("Failed to copy links. Your browser might not support automatic copying in this context.");
-        } finally {
-            document.body.removeChild(textarea);
-        }
-    }
+    // Removed copyAllLinks function as the button has been removed.
 
     // --- Page Initialization ---
     // Dynamically creates and appends category sections to the page.
