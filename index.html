@@ -21,7 +21,7 @@
 
     gtag('config', 'G-4GZPGM6JQG');
   </script>
-  <!-- End Google tag (gtag.js) -->
+  <!-- End Google Tag Manager (gtag.js) -->
 
   <style>
     body {
@@ -30,6 +30,7 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding-top: 130px; /* Adjusted for fixed header and search */
+      padding-bottom: 100px; /* Added padding for the new deal sites section */
       text-align: center;
       font-size: 16px; /* Base font size for larger screens */
     }
@@ -69,6 +70,27 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
+    /* Style for the Stop Launching button */
+    #stopLaunchingBtn {
+      background-color: #FF4444; /* Red color for stop */
+      box-shadow: 0 2px 5px rgba(255, 68, 68, 0.4); /* Reddish shadow */
+    }
+    #stopLaunchingBtn:hover {
+      background-color: #cc3333; /* Darker red on hover */
+    }
+    /* Disabled state for all buttons */
+    .sticky-header button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    /* Style for buttons/elements that are actively launching */
+    .sticky-header button.is-launching {
+      background-color: #008CBA; /* A blue to indicate active/loading */
+      color: white;
+      opacity: 1;
+      cursor: default;
+    }
+
     .sticky-header a {
       background-color: #37475A;
       color: #00ccff;
@@ -119,19 +141,29 @@
       align-items: center;
       font-size: 1.2em; /* Slightly larger for headings */
     }
-    /* Updated: Right-pointing arrow by default (collapsed) */
-    .category h3::after {
-        content: '>'; /* Right-pointing arrow */
-        margin-left: 10px;
-        font-size: 1.2em; /* Make it a bit larger */
-        font-weight: bold; /* Make it stand out */
-        color: #FF9900; /* Give it the accent color */
-        transition: transform 0.2s ease;
-        transform: rotate(0deg); /* Initial state: pointing right */
+    /* Style for actively launching category headers */
+    .category h3.is-launching {
+        background-color: #008CBA; /* A blue to indicate active/loading */
+        color: white;
+        opacity: 1;
+        cursor: default;
+        border-bottom: 1px solid #008CBA; /* Match border color */
     }
-    /* When expanded, rotate to point down */
+
+    /* Arrow styling */
     .category.expanded h3::after {
-        transform: rotate(90deg); /* Rotate to point down */
+        content: '▼'; /* Down-pointing triangle for expanded */
+        margin-left: 10px;
+        font-size: 1em;
+        font-weight: normal;
+        color: #FF9900;
+    }
+    .category:not(.expanded) h3::after {
+        content: '▶'; /* Right-pointing triangle for collapsed */
+        margin-left: 10px;
+        font-size: 1em;
+        font-weight: normal;
+        color: #FF9900;
     }
     .links {
       margin-top: 10px;
@@ -167,7 +199,7 @@
     }
 
     /* Styles for the "click to launch all" span */
-    .category h3 span {
+    .category h3 .launch-instruction { /* Added a class for targeting */
         font-size: 0.8em;
         color: #ccc;
         white-space: nowrap; /* Prevent wrapping */
@@ -194,6 +226,65 @@
         font-size: 1em;
     }
 
+    /* Deal Sites Section */
+    .deal-sites-container {
+      background: #37475A;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 40px auto 20px auto; /* More margin from categories above */
+      width: 90%;
+      max-width: 800px;
+      text-align: center; /* Center content within this box */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .deal-sites-container h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #FF9900;
+      padding-bottom: 10px;
+      color: #FF9900;
+    }
+    .deal-site-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center; /* Center the deal site links */
+      gap: 15px; /* Space between deal site links */
+    }
+    .deal-site-links a {
+      background-color: #111;
+      color: #00ccff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .deal-site-links a:hover {
+      background-color: #FF9900;
+      color: white;
+    }
+
+    /* Styles for the Minimize/Expand All button */
+    #toggleAllCategoriesBtn { /* Renamed ID */
+        background-color: #37475A; /* Darker blue-gray, similar to general category */
+        color: white;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border: 1px solid #FF9900; /* Orange border to stand out slightly */
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    #toggleAllCategoriesBtn:hover {
+        background-color: #FF9900; /* Highlight on hover */
+        color: white;
+        border-color: #FF9900;
+    }
+
+
     /* Responsive adjustments */
     @media (max-width: 1024px) { /* New breakpoint for tablets/medium screens */
         .link-item {
@@ -206,6 +297,7 @@
         body {
             font-size: 18px; /* Larger base font size for mobile */
             padding-top: 190px; /* Increased padding-top for mobile to accommodate both fixed bars */
+            padding-bottom: 80px; /* Adjusted padding for mobile */
         }
         h1 {
             font-size: 2em; /* Larger heading */
@@ -243,6 +335,10 @@
         .info-message {
             font-size: 1.1em;
         }
+        .deal-site-links a {
+            width: 90%; /* Make links take full width on mobile */
+            margin: 5px 0;
+        }
     }
   </style>
 </head>
@@ -259,8 +355,9 @@
       <option value="10000">10s Delay</option>
       <option value="random">Random (4–10s)</option>
     </select>
-    <button onclick="launchAll()">Launch All</button>
-    <button onclick="launchCreatorsList()">Creators List</button>
+    <button id="launchAllBtn" onclick="launchAll(this)">Launch All</button>
+    <button id="stopLaunchingBtn" onclick="stopLaunching()" disabled>🛑 Stop Launching</button>
+    <button id="creatorsListBtn" onclick="launchCreatorsList(this)">Creators List</button>
     <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
@@ -274,11 +371,41 @@
   <p><strong>Select your desired delay, then click a category name to launch all its links in new tabs.</strong></p>
   <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFL, and AI.</p>
 
+  <!-- Toggle All Categories Button -->
+  <button id="toggleAllCategoriesBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
+
   <div id="categories"></div>
 
   <div id="infoMessage"></div>
 
+  <!-- New section for Deal Sites -->
+  <div class="deal-sites-container">
+    <h2>🔗 More Deal Sites</h2>
+    <div class="deal-site-links">
+      <a href="https://www.jungle.deals/" target="_blank">Jungle.Deals</a>
+      <a href="https://www.dealsea.com/" target="_blank">Dealsea.com</a>
+      <a href="https://slickdeals.net/" target="_blank">Slickdeals</a>
+      <a href="https://www.dealnews.com/" target="_blank">DealNews</a>
+      <a href="https://www.woot.com/" target="_blank">Woot!</a>
+      <a href="https://www.bradsdeals.com/" target="_blank">Brad's Deals</a>
+      <a href="https://clarkdeals.com/" target="_blank">ClarkDeals</a>
+    </div>
+  </div>
+  <!-- End new section -->
+
   <script>
+    // Array to store setTimeout IDs for pending tab openings
+    let pendingTimeouts = [];
+
+    // References to buttons
+    const launchAllButton = document.getElementById('launchAllBtn');
+    const stopLaunchingButton = document.getElementById('stopLaunchingBtn');
+    const creatorsListButton = document.getElementById('creatorsListBtn');
+    const toggleAllCategoriesButton = document.getElementById('toggleAllCategoriesBtn'); // Reference to the new button
+
+    // Stores the element (button or h3) that is currently active in launching tabs
+    let currentActiveLauncher = null;
+
     // Defines the categories and their associated search terms.
     // Each inner array contains [displayLabel, URLencodedSearchTerm].
     const categories = {
@@ -316,7 +443,7 @@
         ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
         ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"],
         ["Webcam", "Webcam"], ["Microphone", "Microphone"], ["Monitor Stand", "Monitor%20Stand"],
-        ["Wi-Fi Extender", "Wi-Fi%20Extender"]
+        ["Wi-Fi Extender", "Wi%20Fi%20Extender"]
       ],
       "🧔 Grooming & Personal Care": [
         ["Shaver", "Shaver"], ["Bald", "Bald"], ["Hair Dryer", "Hair%20Dryer"], ["Curling Iron", "Curling%20Iron"],
@@ -427,61 +554,249 @@
     }
 
     /**
+     * Common function to launch a list of items with a given delay and manage pending timeouts.
+     * It also handles visual feedback for the initiating element.
+     * @param {Array<Array<string>>} items - An array of [label, slug] pairs.
+     * @param {string} messagePrefix - Prefix for the info message.
+     * @param {HTMLElement} initiatorElement - The button or h3 that triggered the launch.
+     * @param {number} fixedDelay - Optional fixed delay for the list, overrides dropdown.
+     */
+    function launchItems(items, messagePrefix, initiatorElement, fixedDelay = null) {
+        // Only proceed if no launch is currently active OR if this initiator is the current active one (meaning a "stop" click)
+        if (currentActiveLauncher && currentActiveLauncher !== initiatorElement) {
+            showInfoMessage('Another launch sequence is active. Please stop it first using the active button or the global Stop button.', 4000);
+            return;
+        }
+
+        // If this element is already launching, it means the user wants to stop it
+        if (initiatorElement.classList.contains('is-launching')) {
+            stopLaunching();
+            return;
+        }
+
+        // --- Initiate Launch ---
+        stopLaunching(); // Clear any stale timeouts and reset UI
+        currentActiveLauncher = initiatorElement;
+
+        // Apply visual active state
+        initiatorElement.classList.add('is-launching');
+        stopLaunchingButton.disabled = false;
+
+        // Special handling for category h3 text change
+        if (initiatorElement.tagName === 'H3') {
+            const launchInstructionSpan = initiatorElement.querySelector('.launch-instruction');
+            if (launchInstructionSpan) {
+                // Store original text if not already stored (first time this h3 is an initiator)
+                if (!launchInstructionSpan.dataset.originalText) {
+                    launchInstructionSpan.dataset.originalText = launchInstructionSpan.textContent;
+                }
+                launchInstructionSpan.textContent = " [Launching... Click to Stop]";
+            }
+        }
+
+        // Disable other primary launch buttons and other category h3s
+        launchAllButton.disabled = true;
+        creatorsListButton.disabled = true;
+        toggleAllCategoriesButton.disabled = true; /* Disable during launch */
+
+        document.querySelectorAll('.category h3').forEach(h3 => {
+            if (h3 !== initiatorElement) {
+                h3.style.pointerEvents = 'none'; /* Disable clicks */
+                h3.style.opacity = '0.7'; /* Visually indicate disabled */
+            }
+        });
+
+        showInfoMessage(`${messagePrefix} with delays...`);
+
+        let totalDelay = 0;
+        let completedCount = 0;
+        const totalItems = items.length;
+
+        if (totalItems === 0) {
+            resetLaunchButtons();
+            showInfoMessage('No items to launch.', 2000);
+            return;
+        }
+
+        items.forEach(([_, slug], index) => {
+            const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+            const delay = fixedDelay !== null ? fixedDelay : getDelayValue();
+
+            const timeoutId = setTimeout(() => {
+                window.open(url, '_blank');
+                completedCount++;
+                // Remove this timeout ID from the pending list once it fires
+                pendingTimeouts = pendingTimeouts.filter(id => id !== timeoutId);
+
+                // If all items from this launch sequence have been dispatched
+                if (completedCount === totalItems) {
+                    // Give a small buffer before resetting, in case last tab needs to finish opening
+                    setTimeout(() => {
+                        // Only reset if no manual stop occurred and this was the active launcher
+                        if (pendingTimeouts.length === 0 && currentActiveLauncher === initiatorElement) {
+                            resetLaunchButtons();
+                            showInfoMessage('All tabs launched!', 2000);
+                        }
+                    }, 500);
+                }
+            }, totalDelay);
+            pendingTimeouts.push(timeoutId);
+            totalDelay += delay;
+        });
+    }
+
+    /**
+     * Resets the visual state of launch buttons and re-enables them.
+     */
+    function resetLaunchButtons() {
+        // Clear all pending timeouts just in case (e.g., if manually stopped)
+        pendingTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        pendingTimeouts = [];
+
+        // Re-enable all primary launch buttons
+        launchAllButton.disabled = false;
+        creatorsListButton.disabled = false;
+        stopLaunchingButton.disabled = true;
+        toggleAllCategoriesButton.disabled = false; /* Re-enable */
+
+
+        // Remove active class from buttons
+        launchAllButton.classList.remove('is-launching');
+        creatorsListButton.classList.remove('is-launching');
+
+        // Reset all category h3s
+        document.querySelectorAll('.category h3').forEach(h3 => {
+            h3.style.pointerEvents = 'auto'; /* Enable clicks */
+            h3.style.opacity = '1'; /* Reset opacity */
+            h3.classList.remove('is-launching'); // Remove active class
+
+            const launchInstructionSpan = h3.querySelector('.launch-instruction');
+            if (launchInstructionSpan && launchInstructionSpan.dataset.originalText) {
+                // Restore original text content
+                launchInstructionSpan.textContent = launchInstructionSpan.dataset.originalText;
+                // Clean up the stored original text
+                delete launchInstructionSpan.dataset.originalText;
+            }
+        });
+
+        currentActiveLauncher = null; // Clear the active launcher reference
+    }
+
+    /**
      * Launches all links within a specific category with the chosen delay.
      * @param {Array<Array<string>>} items - An array of [label, slug] pairs for the category.
      * @param {string} categoryTitle - The title of the category for the info message.
+     * @param {HTMLElement} initiatorElement - The h3 element that triggered the launch.
      */
-    function launchCategory(items, categoryTitle) {
-      showInfoMessage(`Launching all links for "${categoryTitle}" with delays...`);
-      let totalDelay = 0;
-      items.forEach(([_, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const delay = getDelayValue();
-        setTimeout(() => window.open(url, '_blank'), totalDelay);
-        totalDelay += delay;
-      });
+    function launchCategory(items, categoryTitle, initiatorElement) {
+      launchItems(items, `Launching all links for "${categoryTitle}"`, initiatorElement);
     }
 
     /**
      * Launches all links from all categories with the chosen delay.
+     * @param {HTMLElement} initiatorElement - The button that triggered the launch.
      */
-    function launchAll() {
-      showInfoMessage("Launching all stored links with delays. This may take a while...", 5000);
-      let totalDelay = 0;
-      Object.values(categories).flat().forEach(([_, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const delay = getDelayValue();
-        setTimeout(() => window.open(url, '_blank'), totalDelay);
-        totalDelay += delay;
-      });
+    function launchAll(initiatorElement) {
+      const allItems = Object.values(categories).flat();
+      launchItems(allItems, "Launching all stored links", initiatorElement);
     }
 
     /**
      * Launches the predefined Creators list items with an 8-second delay.
+     * @param {HTMLElement} initiatorElement - The button that triggered the launch.
      */
-    function launchCreatorsList() {
+    function launchCreatorsList(initiatorElement) {
       const delay = 8000; // 8 seconds delay as requested for Creators list
-      showInfoMessage(`Launching Creators List with ${delay / 1000}s delays...`);
-      let totalDelay = 0;
-      creatorsListItems.forEach(([_, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        setTimeout(() => window.open(url, '_blank'), totalDelay);
-        totalDelay += delay;
-      });
+      launchItems(creatorsListItems, `Launching Creators List`, initiatorElement, delay);
     }
+
+    /**
+     * Stops any ongoing tab launching sequence. This is a global stop.
+     */
+    function stopLaunching() {
+        if (pendingTimeouts.length > 0) {
+            showInfoMessage('Tab launching stopped!', 2000);
+        }
+        resetLaunchButtons(); // This function already handles clearing timeouts and resetting UI
+    }
+
+    /**
+     * Toggles all categories between expanded and minimized states.
+     * Updates the button text accordingly.
+     */
+    function toggleAllCategories() {
+        stopLaunching(); // Stop any active launch before manipulating categories
+        const allCategoryDivs = document.querySelectorAll('.category');
+        let anyExpanded = false;
+
+        // Check if any category is currently expanded
+        for (const categoryDiv of allCategoryDivs) {
+            if (categoryDiv.classList.contains('expanded')) {
+                anyExpanded = true;
+                break;
+            }
+        }
+
+        if (anyExpanded) {
+            // If any are expanded, minimize all
+            allCategoryDivs.forEach(categoryDiv => {
+                categoryDiv.classList.remove('expanded');
+            });
+            toggleAllCategoriesButton.textContent = "Expand All Categories";
+            showInfoMessage('All categories minimized.', 2000);
+        } else {
+            // If all are minimized, expand all
+            allCategoryDivs.forEach(categoryDiv => {
+                categoryDiv.classList.add('expanded');
+            });
+            toggleAllCategoriesButton.textContent = "Minimize All Categories";
+            showInfoMessage('All categories expanded.', 2000);
+        }
+    }
+
 
     /**
      * Toggles the visibility of links within a category and updates its expanded state.
      * @param {HTMLElement} categoryDiv - The div element representing the category.
      */
     function toggleCategory(categoryDiv) {
-        categoryDiv.classList.toggle('expanded');
-        // The display logic is now handled by CSS based on the 'expanded' class.
-        // We only need to ensure scrolling if it's being expanded.
-        if (categoryDiv.classList.contains('expanded')) {
-            categoryDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Only toggle if no launch is active AND this category is not the current active launcher.
+        // This ensures a click on a launching H3 stops it, but otherwise allows normal toggle.
+        if (!currentActiveLauncher) { // Only allow manual collapse/expand if no launch is active
+             categoryDiv.classList.toggle('expanded');
+            // We only need to ensure scrolling if it's being expanded.
+            if (categoryDiv.classList.contains('expanded')) {
+                categoryDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Update the state of the toggleAllCategoriesButton
+            updateToggleAllCategoriesButtonState();
+        } else if (currentActiveLauncher === categoryDiv.querySelector('h3')) {
+            // If this category is the active launcher, the click already handled stopping it
+            // No need to do anything here for toggle
+        } else {
+            showInfoMessage('A launch sequence is active. Please stop it first.', 4000);
         }
     }
+
+    /**
+     * Updates the text of the "Minimize/Expand All Categories" button based on the current state.
+     */
+    function updateToggleAllCategoriesButtonState() {
+        const allCategoryDivs = document.querySelectorAll('.category');
+        let anyExpanded = false;
+        for (const categoryDiv of allCategoryDivs) {
+            if (categoryDiv.classList.contains('expanded')) {
+                anyExpanded = true;
+                break;
+            }
+        }
+        if (anyExpanded) {
+            toggleAllCategoriesButton.textContent = "Minimize All Categories";
+        } else {
+            toggleAllCategoriesButton.textContent = "Expand All Categories";
+        }
+    }
+
 
     // --- Page Initialization ---
     // Dynamically creates and appends category sections to the page.
@@ -491,24 +806,38 @@
       div.className = "category expanded";
 
       const h3 = document.createElement("h3");
-      h3.textContent = title; // Text content without the "[click to launch all]"
-      // Add a span for the "click to launch all" instruction that's visible
+      h3.textContent = title; // Main text content for the category title
+      // Create a span for the launch instruction that will change
       const launchInstruction = document.createElement("span");
-      launchInstruction.textContent = " [click to launch all]";
-      launchInstruction.style.fontSize = '0.8em';
-      launchInstruction.style.color = '#ccc';
-      launchInstruction.style.whiteSpace = 'nowrap'; /* Prevent wrapping */
-      launchInstruction.style.flexShrink = '0'; /* Prevent it from shrinking */
+      launchInstruction.className = "launch-instruction"; // Add class for specific targeting
+      launchInstruction.textContent = " [click to launch all]"; // Default text
+      launchInstruction.dataset.originalText = launchInstruction.textContent; // Store original text
+      
       h3.appendChild(launchInstruction);
 
-      // Event listener for toggling visibility
+      // Event listener for toggling visibility AND launching based on click target
       h3.onclick = (event) => {
-        // If the direct target is the launch instruction, launch all.
-        // Otherwise, toggle the category's links.
-        if (event.target === launchInstruction) {
-          launchCategory(items, title);
+        const target = event.target;
+        const clickedH3 = event.currentTarget; // The h3 itself
+
+        // If this h3 is already the active launcher, clicking it again should stop the launch
+        if (clickedH3.classList.contains('is-launching')) {
+            stopLaunching();
+            return;
+        }
+
+        // If another launch is active globally (from a button or another h3)
+        if (currentActiveLauncher && currentActiveLauncher !== clickedH3) {
+            showInfoMessage('Another launch sequence is active. Please stop it first.', 4000);
+            return;
+        }
+
+        // If the click is specifically on the "launch all" span
+        if (target.classList.contains('launch-instruction')) {
+            launchCategory(items, title, clickedH3); // Pass the h3 element itself
         } else {
-          toggleCategory(div);
+            // Otherwise, toggle the category's expanded state
+            toggleCategory(div);
         }
       };
       div.appendChild(h3);
@@ -517,7 +846,7 @@
       linksDiv.className = "links"; // No initial display:none; here in JS
 
       items.forEach(([label, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const url = `https://www.com/vine/vine-items?search=${slug}`;
         const a = document.createElement("a");
         a.href = url;
         a.target = "_blank";
@@ -529,6 +858,9 @@
       div.appendChild(linksDiv);
       container.appendChild(div);
     }
+    // Update the button state on initial load
+    updateToggleAllCategoriesButtonState();
   </script>
 </body>
 </html>
+
