@@ -8,7 +8,7 @@
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-PHVHKCDP');</script>
   <!-- End Google Tag Manager -->
 
@@ -119,39 +119,65 @@
       align-items: center;
       font-size: 1.2em; /* Slightly larger for headings */
     }
-    /* Modified: Arrow now points up by default */
+    /* Updated: Right-pointing arrow by default (collapsed) */
     .category h3::after {
-        content: '▲'; /* Up arrow for expanded */
+        content: '>'; /* Right-pointing arrow */
         margin-left: 10px;
+        font-size: 1.2em; /* Make it a bit larger */
+        font-weight: bold; /* Make it stand out */
+        color: #FF9900; /* Give it the accent color */
         transition: transform 0.2s ease;
-        transform: rotate(0deg); /* Initial state for animation */
+        transform: rotate(0deg); /* Initial state: pointing right */
     }
-    /* Modified: Arrow points down when collapsed */
-    .category:not(.expanded) h3::after {
-        content: '▼'; /* Down arrow for collapsed */
-        transform: rotate(180deg);
+    /* When expanded, rotate to point down */
+    .category.expanded h3::after {
+        transform: rotate(90deg); /* Rotate to point down */
     }
     .links {
-      /* Removed 'display: none;' here so they are visible by default */
       margin-top: 10px;
       padding-top: 10px;
       border-top: 1px dashed rgba(255,255,255,0.2);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 10px; /* Space between items in both rows/columns */
     }
-    /* Added display property for collapsed state */
-    .category:not(.expanded) .links {
-        display: none;
-    }
+    /* Adjusted .link-item for flex container */
     .link-item {
       color: #00ccff;
-      display: block;
-      margin: 4px 0 4px 20px;
+      display: inline-block;
+      margin: 0;
+      padding: 8px 12px; /* Add some padding to make clickable area larger */
       text-decoration: none;
-      transition: color 0.2s ease;
-      font-size: 1em; /* Relative to parent/body font size */
+      transition: color 0.2s ease, background-color 0.2s ease;
+      font-size: 1em;
+      background-color: rgba(0,0,0,0.1); /* Subtle background for better visual separation */
+      border-radius: 6px;
+
+      /* Default to 3 columns on larger screens */
+      flex-basis: calc(33.33% - 10px); /* 3 items per row with 10px gap */
+      max-width: calc(33.33% - 10px);
+      text-align: center; /* Center text within each item */
+      box-sizing: border-box; /* Include padding and border in the width calculation */
     }
     .link-item:hover {
       color: #66e0ff;
       text-decoration: underline;
+      background-color: rgba(0,0,0,0.2);
+    }
+
+    /* Styles for the "click to launch all" span */
+    .category h3 span {
+        font-size: 0.8em;
+        color: #ccc;
+        white-space: nowrap; /* Prevent wrapping */
+        margin-left: 10px; /* Ensure space from the main title */
+        flex-shrink: 0; /* Prevent it from shrinking if main title is long */
+    }
+
+    /* Added display property for collapsed state */
+    .category:not(.expanded) .links {
+        display: none;
     }
     .info-message {
         background-color: #4CAF50; /* Green */
@@ -167,7 +193,15 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         font-size: 1em;
     }
+
     /* Responsive adjustments */
+    @media (max-width: 1024px) { /* New breakpoint for tablets/medium screens */
+        .link-item {
+            flex-basis: calc(50% - 10px); /* 2 items per row */
+            max-width: calc(50% - 10px);
+        }
+    }
+
     @media (max-width: 768px) {
         body {
             font-size: 18px; /* Larger base font size for mobile */
@@ -201,6 +235,10 @@
         }
         .link-item {
             font-size: 1.1em; /* Larger link items */
+            padding: 10px 15px; /* Adjust padding for mobile */
+            flex-basis: calc(100% - 0px); /* Single column on mobile */
+            max-width: 100%;
+            margin-bottom: 10px; /* Add margin between stacked items on mobile */
         }
         .info-message {
             font-size: 1.1em;
@@ -213,6 +251,7 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+
   <div class="sticky-header">
     <select id="delay">
       <option value="5000">5s Delay</option>
@@ -221,10 +260,10 @@
       <option value="random">Random (4–10s)</option>
     </select>
     <button onclick="launchAll()">Launch All</button>
+    <button onclick="launchCreatorsList()">Creators List</button>
     <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
-    <!-- Removed "Copy All Links" button as requested -->
   </div>
 
   <div class="search-container">
@@ -237,7 +276,7 @@
 
   <div id="categories"></div>
 
-  <div id="infoMessage" class="info-message"></div>
+  <div id="infoMessage"></div>
 
   <script>
     // Defines the categories and their associated search terms.
@@ -246,9 +285,10 @@
       "✨ Zero ETV Focus": [
         ["Supplements", "Supplements"], ["Vitamins", "Vitamins"], ["Gummies", "Gummies"],
         ["Shampoo", "Shampoo"], ["Conditioner", "Conditioner"], ["Lotion", "Lotion"],
-        ["Makeup", "Makeup"], ["Skincare", "Skincare"], ["Face Mask", "Face%20Mask"],
-        ["Bandages", "Bandages"], ["Brace", "Brace"], ["Reading Glasses", "Reading%20glasses"],
-        ["Coffee", "Coffee"], ["Tea", "Tea"], ["Snacks", "Snacks"],
+        ["Mascara", "Mascara"], ["Makeup", "Makeup"], ["Skincare", "Skincare"], ["Face Mask", "Face%20Mask"],
+        ["Makeup Brush", "Makeup%20Brush"], ["Bandages", "Bandages"], ["Brace", "Brace"], ["Reading Glasses", "Reading%20glasses"],
+        ["Coffee", "Coffee"], ["Tea", "Tea"], ["Snacks", "Snacks"], ["Ramen", "Ramen"],
+        ["Nuts", "Nuts"], ["Granola", "Granola"], ["Detergent", "Detergent"],
         ["Pet Food", "Pet%20Food"], ["Pet Treats", "Pet%20Treats"], ["Diapers", "Diapers"],
         ["Wipes", "Wipes"], ["Lubricant", "Lubricant"], ["Massager", "Massager"]
       ],
@@ -261,12 +301,14 @@
         ["Car Organizer", "Car%20Organizer"], ["Tire Pressure Monitor", "Tire%20Pressure%20Monitor"],
         ["Jump Starter Cable", "Jump%20Starter%20Cable"], ["Car Cover", "Car%20Cover"],
         ["Motorcycle Phone Mount", "Motorcycle%20Phone%20Mount"], ["ATV Winch", "ATV%20Winch"],
-        ["Car Cleaning Kit", "Car%20Cleaning%20Kit"], ["LED Headlight", "LED%20Headlight"]
+        ["Car Cleaning Kit", "Car%20Cleaning%20Kit"], ["LED Headlight", "LED%20Headlight"],
+        ["Seat Covers", "Seat%20Covers"], ["Car Polish", "Car%20Polish"]
       ],
       "🧰 Tools & Home Improvement": [
         ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
         ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"],
-        ["Electric Kettle", "Electric%20Kettle"], ["Smart Lighting", "Smart%20Lighting"], ["Cookware", "Cookware"]
+        ["Electric Kettle", "Electric%20Kettle"], ["Smart Lighting", "Smart%20Lighting"], ["Cookware", "Cookware"],
+        ["Air Fryer", "Air%20Fryer"], ["Heated Blanket", "Heated%20Blanket"]
       ],
       "📱 Tech & Electronics": [
         ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
@@ -277,19 +319,22 @@
         ["Wi-Fi Extender", "Wi-Fi%20Extender"]
       ],
       "🧔 Grooming & Personal Care": [
-        ["Shaver", "Shaver"], ["Bald", "Bald"], ["Hair Dryer", "Hair%20Dryer"], ["Curling Iron", "Curling%20Iron"]
+        ["Shaver", "Shaver"], ["Bald", "Bald"], ["Hair Dryer", "Hair%20Dryer"], ["Curling Iron", "Curling%20Iron"],
+        ["Mascara", "Mascara"], ["Manicure", "Manicure"], ["Nail Polish", "Nail%20Polish"],
+        ["Hair Brush", "Hair%20Brush"], ["Hair Trimmer", "Hair%20Trimmer"], ["Beard", "Beard"]
       ],
       "👓 Vision & Eyewear": [
         ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"]
       ],
       "🍬 Health & Wellness": [
         ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
-        ["Sex", "Sex"], ["Vitamin", "Vitamin"], ["Blood Pressure Monitor", "Blood%20Pressure%20Monitor"],
+        ["Sex", "Sex"], ["Vitamin", "Vitamin"], ["Protein", "Protein"],
+        ["Blood Pressure Monitor", "Blood%20Pressure%20Monitor"],
         ["Thermometer", "Thermometer"], ["First Aid", "First%20Aid"], ["Brace", "Brace"]
       ],
       "☀️ Outdoors & Solar": [
         ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"],
-        ["Camping", "Camping"], ["Hiking", "Hiking"]
+        ["Camping", "Camping"], ["Hiking", "Hiking"], ["Cooler", "Cooler"]
       ],
       "🐾 Pet Care": [
         ["Cat Tree", "Cat%20Tree"], ["Dog Bed", "Dog%20Bed"], ["Pet Camera", "Pet%20Camera"],
@@ -313,6 +358,27 @@
         ["Bosch", "Bosch"], ["Meguiar’s", "Meguiar's"], ["Rain-X", "Rain-X"], ["Thule", "Thule"], ["WeatherTech", "WeatherTech"]
       ]
     };
+
+    // Define the Creators list items for the new button
+    const creatorsListItems = [
+        ["Camry 2011", "Camry%202011"], ["Civic 2006", "Civic%202006"], ["CR-V 2007", "CR-V%202007"],
+        ["Express 1500", "Express%201500"], ["Dash Cam", "Dash%20cam"], ["Wiper", "Wiper"],
+        ["Relay Switch", "Relay%20switch"], ["TRX250EX", "TRX250EX"], ["Sportsman 570", "Sportsman%20570"],
+        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"],
+        ["Tool", "Tool"], ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
+        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"],
+        ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
+        ["Robotic", "Robotic"], ["Bluetooth", "Bluetooth"], ["HDMI", "HDMI"],
+        ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
+        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"],
+        ["Beard", "Beard"], ["Shaver", "Shaver"], ["Bald", "Bald"],
+        ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"],
+        ["Hearing Aid", "Hearing%20Aid"],
+        ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
+        ["Sex", "Sex"], ["Vitamin", "Vitamin"],
+        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"]
+    ];
+
 
     const container = document.getElementById("categories");
     const infoMessageElement = document.getElementById("infoMessage");
@@ -391,6 +457,20 @@
     }
 
     /**
+     * Launches the predefined Creators list items with an 8-second delay.
+     */
+    function launchCreatorsList() {
+      const delay = 8000; // 8 seconds delay as requested for Creators list
+      showInfoMessage(`Launching Creators List with ${delay / 1000}s delays...`);
+      let totalDelay = 0;
+      creatorsListItems.forEach(([_, slug]) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        setTimeout(() => window.open(url, '_blank'), totalDelay);
+        totalDelay += delay;
+      });
+    }
+
+    /**
      * Toggles the visibility of links within a category and updates its expanded state.
      * @param {HTMLElement} categoryDiv - The div element representing the category.
      */
@@ -402,8 +482,6 @@
             categoryDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
-
-    // Removed copyAllLinks function as the button has been removed.
 
     // --- Page Initialization ---
     // Dynamically creates and appends category sections to the page.
@@ -419,6 +497,8 @@
       launchInstruction.textContent = " [click to launch all]";
       launchInstruction.style.fontSize = '0.8em';
       launchInstruction.style.color = '#ccc';
+      launchInstruction.style.whiteSpace = 'nowrap'; /* Prevent wrapping */
+      launchInstruction.style.flexShrink = '0'; /* Prevent it from shrinking */
       h3.appendChild(launchInstruction);
 
       // Event listener for toggling visibility
