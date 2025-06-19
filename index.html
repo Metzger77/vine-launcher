@@ -29,7 +29,8 @@
       color: white;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding-top: 130px; /* Adjusted for fixed header and search */
+      /* Adjusted padding-top to give more space for the header, especially when wrapped */
+      padding-top: 150px;
       padding-bottom: 100px; /* Added padding for the new deal sites section */
       text-align: center;
       font-size: 16px; /* Base font size for larger screens */
@@ -47,17 +48,27 @@
       display: flex;
       flex-wrap: wrap; /* Allow items to wrap on smaller screens */
       align-items: center;
-      justify-content: space-around;
+      /* Changed justify-content to center for better button grouping when wrapping */
+      justify-content: center;
+      /* Added gap for consistent spacing between flex items */
+      gap: 10px;
       z-index: 9999;
       box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      box-sizing: border-box; /* Include padding in element's total width/height */
+      min-height: 70px; /* Ensure a minimum height for the header */
     }
     .sticky-header select, .sticky-header button, .sticky-header a {
       font-size: 1em; /* Relative to parent/body font size */
       padding: 8px 12px;
       border: none;
       border-radius: 6px;
-      margin: 5px; /* Adjusted margin for better spacing */
+      margin: 0; /* Removed individual item margins, controlled by gap in parent */
       flex-shrink: 0; /* Prevent items from shrinking */
+      /* Default flex-basis for larger screens, allows items to fit naturally */
+      flex-basis: auto;
+      min-width: 100px; /* Ensure a minimum width for buttons */
+      text-align: center; /* Center text within all header buttons/links */
+      box-sizing: border-box; /* Crucial for calc() with padding */
     }
     .sticky-header select {
       background: #FF9900;
@@ -102,13 +113,15 @@
     }
     .search-container {
       position: fixed;
-      top: 70px; /* Below the main header */
+      /* Adjusted top positioning based on dynamic header height and new padding */
+      top: 90px;
       width: 100%;
       text-align: center;
       padding: 10px;
       background: #232F3E;
       z-index: 9998;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-sizing: border-box;
     }
     #searchBox {
       width: 60%;
@@ -291,12 +304,19 @@
             flex-basis: calc(50% - 10px); /* 2 items per row */
             max-width: calc(50% - 10px);
         }
+        /* Sticky header items also start going to two columns earlier */
+        .sticky-header select, .sticky-header button, .sticky-header a {
+            flex-basis: calc(33.33% - 15px); /* Start at 3 columns or wrap to 2 earlier if needed */
+            max-width: calc(33.33% - 15px);
+        }
     }
 
+    /* Tablet and larger mobile (e.g., landscape mobile) */
     @media (max-width: 768px) {
         body {
             font-size: 18px; /* Larger base font size for mobile */
-            padding-top: 190px; /* Increased padding-top for mobile to accommodate both fixed bars */
+            /* Adjusted padding to give more space for the header, especially when wrapped */
+            padding-top: 180px;
             padding-bottom: 80px; /* Adjusted padding for mobile */
         }
         h1 {
@@ -306,17 +326,20 @@
             font-size: 1.1em; /* Larger paragraph text */
         }
         .sticky-header {
-            flex-direction: column; /* Stack items vertically */
+            /* Now flex-wrap handles the wrapping naturally, no need for flex-direction: column here */
+            justify-content: center; /* Center items when they wrap */
             padding: 10px;
+            height: auto; /* Allow height to adjust based on content */
         }
         .sticky-header select, .sticky-header button, .sticky-header a {
-            margin: 5px 0;
-            width: 90%;
-            text-align: center;
+            flex-basis: calc(50% - 10px); /* Approx. 2 columns with padding/gap */
+            max-width: calc(50% - 10px);
             font-size: 1.1em; /* Larger buttons/select */
+            text-align: center; /* Ensure text is centered within each button */
         }
         .search-container {
-            top: 150px; /* Adjusted top to be below the potentially taller sticky header on mobile */
+            /* Adjusted top positioning based on dynamic header height and new padding */
+            top: 120px;
         }
         #searchBox {
             width: 90%;
@@ -328,8 +351,8 @@
         .link-item {
             font-size: 1.1em; /* Larger link items */
             padding: 10px 15px; /* Adjust padding for mobile */
-            flex-basis: calc(100% - 0px); /* Single column on mobile */
-            max-width: 100%;
+            flex-basis: calc(50% - 10px); /* Force 2 columns on mobile */
+            max-width: calc(50% - 10px);
             margin-bottom: 10px; /* Add margin between stacked items on mobile */
         }
         .info-message {
@@ -338,6 +361,22 @@
         .deal-site-links a {
             width: 90%; /* Make links take full width on mobile */
             margin: 5px 0;
+        }
+    }
+
+    /* Extra small mobile screens (e.g., portrait mode on small phones) */
+    @media (max-width: 480px) {
+        body {
+          /* Adjusted padding for a fully stacked header and search */
+          padding-top: 250px;
+        }
+        .sticky-header select, .sticky-header button, .sticky-header a {
+            flex-basis: calc(100% - 10px); /* Stack to 1 column on very small screens */
+            max-width: calc(100% - 10px);
+        }
+        .search-container {
+            /* Adjusted top positioning for single-column header */
+            top: 200px;
         }
     }
   </style>
@@ -359,7 +398,7 @@
     <button id="stopLaunchingBtn" onclick="stopLaunching()" disabled>🛑 Stop Launching</button>
     <button id="creatorsListBtn" onclick="launchCreatorsList(this)">Creators List</button>
     <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
-    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFA</a>
     <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
   </div>
 
@@ -369,7 +408,7 @@
 
   <h1>Amazon Vine Link Launcher</h1>
   <p><strong>Select your desired delay, then click a category name to launch all its links in new tabs.</strong></p>
-  <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFL, and AI.</p>
+  <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFA, and AI.</p>
 
   <!-- Toggle All Categories Button -->
   <button id="toggleAllCategoriesBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
@@ -846,7 +885,7 @@
       linksDiv.className = "links"; // No initial display:none; here in JS
 
       items.forEach(([label, slug]) => {
-        const url = `https://www.com/vine/vine-items?search=${slug}`;
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
         const a = document.createElement("a");
         a.href = url;
         a.target = "_blank";
@@ -863,4 +902,3 @@
   </script>
 </body>
 </html>
-
