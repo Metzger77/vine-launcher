@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Amazon Vine Link Launcher</title>
+  <style>
+    body {
+      background-color: #232F3E;
+      color: white;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding-top: 80px;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #FF9900;
+    }
+    .sticky-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #111;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 9999;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+    .sticky-header select, .sticky-header button, .sticky-header a {
+      font-size: 1em;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      margin: 0 5px;
+    }
+    .sticky-header select {
+      background: #FF9900;
+      color: white;
+    }
+    .sticky-header button {
+      background-color: #FF9900;
+      color: white;
+      cursor: pointer;
+    }
+    .sticky-header a {
+      background-color: #37475A;
+      color: #00ccff;
+      text-decoration: none;
+    }
+    .sticky-header button:hover {
+      background-color: #cc7a00;
+    }
+    .category {
+      background: #37475A;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      text-align: left;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .category h3 {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #FF9900;
+      padding-bottom: 5px;
+      cursor: pointer;
+    }
+    .links {
+      display: block;
+      margin-top: 10px;
+    }
+    .link-item {
+      color: #00ccff;
+      display: block;
+      margin: 4px 0 4px 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="sticky-header">
+    <select id="delay">
+      <option value="5000">5s Delay</option>
+      <option value="7000">7s Delay</option>
+      <option value="10000">10s Delay</option>
+      <option value="random">Random (4–10s)</option>
+    </select>
+    <button onclick="launchAll()">Launch All</button>
+    <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFL</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
+  </div>
+
+  <div style="position:fixed;top:60px;width:100%;text-align:center;padding:5px;background:#232F3E;z-index:9998;">
+    <input type="text" id="searchBox" onkeydown="searchAmazon(event)" placeholder="Search Vine on Amazon..." style="width:60%;padding:10px;font-size:16px;border-radius:6px;border:none;">
+  </div>
+
+  <h1>Amazon Vine Link Launcher</h1>
+  <p>Select delay, then click a category name to launch all its links.</p>
+
+  <div id="categories"></div>
+
+  <script>
+    function searchAmazon(e) {
+      if (e.key === 'Enter') {
+        const term = document.getElementById('searchBox').value.trim();
+        if (!term) return;
+        const formatted = encodeURIComponent(term);
+        window.open(`https://www.amazon.com/vine/vine-items?search=${formatted}`, '_blank');
+      }
+    }
+
+    const categories = {
+      "🚗 Automotive & Powersports": [
+        ["Camry 2011", "Camry%202011"], ["Civic 2006", "Civic%202006"], ["CR-V 2007", "CR-V%202007"],
+        ["Express 1500", "Express%201500"], ["Dash Cam", "Dash%20cam"], ["Wiper", "Wiper"],
+        ["Relay Switch", "Relay%20switch"], ["TRX250EX", "TRX250EX"], ["Sportsman 570", "Sportsman%20570"],
+        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"]
+      ],
+      "🧰 Tools & Home Improvement": [
+        ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
+        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"]
+      ],
+      "📱 Tech & Electronics": [
+        ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
+        ["Robotic", "Robotic"], ["Bluetooth", "Bluetooth"], ["HDMI", "HDMI"],
+        ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
+        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"]
+      ],
+      "🧔 Grooming & Personal Care": [
+        ["Shaver", "Shaver"], ["Bald", "Bald"]
+      ],
+      "👓 Vision & Eyewear": [
+        ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"]
+      ],
+      "🍬 Health & Wellness": [
+        ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
+        ["Sex", "Sex"], ["Vitamin", "Vitamin"]
+      ],
+      "☀️ Outdoors & Solar": [
+        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"]
+      ],
+      "🏷️ Name Brands": [
+        ["Sony", "Sony"], ["Samsung", "Samsung"], ["LG", "LG"], ["Apple", "Apple"], ["Anker", "Anker"],
+        ["JBL", "JBL"], ["Bose", "Bose"], ["Logitech", "Logitech"], ["Razer", "Razer"],
+        ["Acer", "Acer"], ["Asus", "Asus"], ["TP-Link", "TP-Link"], ["Netgear", "Netgear"], ["Corsair", "Corsair"],
+        ["Dyson", "Dyson"], ["Shark", "Shark"], ["iRobot", "iRobot"], ["Keurig", "Keurig"], ["Ninja", "Ninja"],
+        ["Instant Pot", "Instant%20Pot"], ["Eufy", "Eufy"], ["Tineco", "Tineco"], ["Philips", "Philips"], ["Oral-B", "Oral-B"],
+        ["DeWalt", "DeWalt"], ["Milwaukee", "Milwaukee"], ["Makita", "Makita"], ["Ryobi", "Ryobi"], ["Kobalt", "Kobalt"],
+        ["Craftsman", "Craftsman"], ["Husky", "Husky"], ["Garmin", "Garmin"], ["Goodyear", "Goodyear"],
+        ["Bosch", "Bosch"], ["Meguiar’s", "Meguiar's"], ["Rain-X", "Rain-X"], ["Thule", "Thule"], ["WeatherTech", "WeatherTech"]
+      ]
+    };
+
+    const container = document.getElementById("categories");
+    for (const [title, items] of Object.entries(categories)) {
+      const div = document.createElement("div");
+      div.className = "category";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = title + " [click to launch all]";
+      h3.onclick = () => launchCategory(items);
+      div.appendChild(h3);
+
+      const linksDiv = document.createElement("div");
+      linksDiv.className = "links";
+
+      items.forEach(([label, slug]) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.className = "link-item";
+        a.textContent = label;
+        linksDiv.appendChild(a);
+      });
+
+      div.appendChild(linksDiv);
+      container.appendChild(div);
+    }
+
+    function getDelayValue(i) {
+      const delaySetting = document.getElementById("delay").value;
+      if (delaySetting === "random") {
+        return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
+      }
+      return parseInt(delaySetting);
+    }
+
+    function launchCategory(items) {
+      let totalDelay = 0;
+      items.forEach(([_, slug]) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const delay = getDelayValue();
+        setTimeout(() => window.open(url, '_blank'), totalDelay);
+        totalDelay += delay;
+      });
+    }
+
+    function launchAll() {
+      Object.values(categories).flat().forEach(([_, slug], i) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const delay = getDelayValue(i);
+        setTimeout(() => window.open(url, '_blank'), i * delay);
+      });
+    }
+  </script>
+</body>
+</html>
