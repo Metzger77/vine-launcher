@@ -29,8 +29,8 @@
       color: white;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      /* Adjusted padding-top to give more space for the header, especially when wrapped */
-      padding-top: 150px;
+      /* Adjusted padding-top to account for the sticky header only on larger screens */
+      padding-top: 100px;
       padding-bottom: 100px; /* Added padding for the new deal sites section */
       text-align: center;
       font-size: 16px; /* Base font size for larger screens */
@@ -112,16 +112,15 @@
       background-color: #cc7a00;
     }
     .search-container {
-      position: fixed;
-      /* Adjusted top positioning based on dynamic header height and new padding */
-      top: 90px;
+      /* Removed sticky positioning */
       width: 100%;
       text-align: center;
       padding: 10px;
       background: #232F3E;
-      z-index: 9998;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       box-sizing: border-box;
+      /* Added margin-top to separate it from the header */
+      margin-top: 20px;
     }
     #searchBox {
       width: 60%;
@@ -304,10 +303,16 @@
             flex-basis: calc(50% - 10px); /* 2 items per row */
             max-width: calc(50% - 10px);
         }
-        /* Sticky header items also start going to two columns earlier */
-        .sticky-header select, .sticky-header button, .sticky-header a {
+        /* Sticky header select/button items start going to three columns */
+        .sticky-header select, .sticky-header button {
             flex-basis: calc(33.33% - 15px); /* Start at 3 columns or wrap to 2 earlier if needed */
             max-width: calc(33.33% - 15px);
+        }
+        /* RFY, AFA, AI links are more flexible */
+        .sticky-header a {
+            flex-basis: auto; /* Allow them to take only the width they need */
+            max-width: fit-content; /* Ensure they don't grow too wide */
+            min-width: 0; /* Allow to shrink smaller than 100px */
         }
     }
 
@@ -315,8 +320,8 @@
     @media (max-width: 768px) {
         body {
             font-size: 18px; /* Larger base font size for mobile */
-            /* Adjusted padding to give more space for the header, especially when wrapped */
-            padding-top: 180px;
+            /* Adjusted padding to give more space for the header when wrapped on mobile */
+            padding-top: 180px; /* Increased padding further for better spacing */
             padding-bottom: 80px; /* Adjusted padding for mobile */
         }
         h1 {
@@ -326,20 +331,25 @@
             font-size: 1.1em; /* Larger paragraph text */
         }
         .sticky-header {
-            /* Now flex-wrap handles the wrapping naturally, no need for flex-direction: column here */
             justify-content: center; /* Center items when they wrap */
             padding: 10px;
             height: auto; /* Allow height to adjust based on content */
         }
-        .sticky-header select, .sticky-header button, .sticky-header a {
+        .sticky-header select, .sticky-header button {
             flex-basis: calc(50% - 10px); /* Approx. 2 columns with padding/gap */
             max-width: calc(50% - 10px);
             font-size: 1.1em; /* Larger buttons/select */
             text-align: center; /* Ensure text is centered within each button */
         }
+        .sticky-header a { /* Specific rule for links */
+            flex-basis: auto; /* Allow items to take only the width they need */
+            max-width: fit-content; /* Ensure they don't grow too wide */
+            min-width: 0; /* Allow to shrink smaller than 100px */
+            font-size: 1.1em;
+            text-align: center;
+        }
         .search-container {
-            /* Adjusted top positioning based on dynamic header height and new padding */
-            top: 120px;
+            margin-top: 15px; /* Adjust margin for mobile */
         }
         #searchBox {
             width: 90%;
@@ -367,16 +377,22 @@
     /* Extra small mobile screens (e.g., portrait mode on small phones) */
     @media (max-width: 480px) {
         body {
-          /* Adjusted padding for a fully stacked header and search */
-          padding-top: 250px;
+          /* Adjusted padding for a fully stacked header (if it wraps to max lines) */
+          padding-top: 280px; /* Further increased padding for very small screens */
         }
-        .sticky-header select, .sticky-header button, .sticky-header a {
+        .sticky-header select, .sticky-header button {
             flex-basis: calc(100% - 10px); /* Stack to 1 column on very small screens */
             max-width: calc(100% - 10px);
         }
+        .sticky-header a { /* Specific rule for links */
+            flex-basis: auto;
+            max-width: fit-content;
+            min-width: 0;
+            font-size: 1.1em;
+            text-align: center;
+        }
         .search-container {
-            /* Adjusted top positioning for single-column header */
-            top: 200px;
+            margin-top: 15px; /* Consistent margin */
         }
     }
   </style>
