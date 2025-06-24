@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Amazon Vine Link Launcher</title>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -11,397 +11,199 @@
   'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-PHVHKCDP');</script>
   <!-- End Google Tag Manager -->
-
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GZPGM6JQG"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
+    window.dataLayer = window.dataLayer||[];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
-    gtag('config', 'G-4GZPGM6JQG');
+    gtag('config','G-4GZPGM6JQG');
   </script>
-  <!-- End Google Tag Manager (gtag.js) -->
-
   <style>
     body {
       background-color: #232F3E;
       color: white;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      /* Adjusted padding-top to account for the sticky header only on larger screens */
       padding-top: 100px;
-      padding-bottom: 100px; /* Added padding for the new deal sites section */
+      padding-bottom: 100px;
       text-align: center;
-      font-size: 16px; /* Base font size for larger screens */
+      font-size: 16px;
     }
-    h1, h2 {
-      color: #FF9900;
-    }
+    h1,h2 { color: #FF9900 }
     .sticky-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background-color: #111;
-      padding: 15px 20px;
-      display: flex;
-      flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-      align-items: center;
-      /* Changed justify-content to center for better button grouping when wrapping */
-      justify-content: center;
-      /* Added gap for consistent spacing between flex items */
-      gap: 10px;
-      z-index: 9999;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-      box-sizing: border-box; /* Include padding in element's total width/height */
-      min-height: 70px; /* Ensure a minimum height for the header */
+      position: fixed; top:0; left:0; right:0;
+      background-color:#111; padding:15px 20px;
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
+      z-index:9999; box-shadow:0 2px 5px rgba(0,0,0,0.4);
+      box-sizing:border-box; min-height:70px;
     }
-    .sticky-header select, .sticky-header button, .sticky-header a {
-      font-size: 1em; /* Relative to parent/body font size */
-      padding: 8px 12px;
-      border: none;
-      border-radius: 6px;
-      margin: 0; /* Removed individual item margins, controlled by gap in parent */
-      flex-shrink: 0; /* Prevent items from shrinking */
-      /* Default flex-basis for larger screens, allows items to fit naturally */
-      flex-basis: auto;
-      min-width: 100px; /* Ensure a minimum width for buttons */
-      text-align: center; /* Center text within all header buttons/links */
-      box-sizing: border-box; /* Crucial for calc() with padding */
+    .sticky-header select,
+    .sticky-header button,
+    .sticky-header a {
+      font-size:1em; padding:8px 12px;
+      border:none; border-radius:6px; margin:0;
+      flex-shrink:0; flex-basis:auto; min-width:100px;
+      text-align:center; box-sizing:border-box;
     }
     .sticky-header select {
-      background: #FF9900;
-      color: white;
-      cursor: pointer;
+      background:#FF9900; color:#fff; cursor:pointer;
     }
     .sticky-header button {
-      background-color: #FF9900;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
+      background:#FF9900; color:#fff;
+      cursor:pointer; transition:background-color .2s;
     }
-    /* Style for the Stop Launching button */
-    #stopLaunchingBtn {
-      background-color: #FF4444; /* Red color for stop */
-      box-shadow: 0 2px 5px rgba(255, 68, 68, 0.4); /* Reddish shadow */
-    }
-    #stopLaunchingBtn:hover {
-      background-color: #cc3333; /* Darker red on hover */
-    }
-    /* Disabled state for all buttons */
-    .sticky-header button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    /* Style for buttons/elements that are actively launching */
-    .sticky-header button.is-launching {
-      background-color: #008CBA; /* A blue to indicate active/loading */
-      color: white;
-      opacity: 1;
-      cursor: default;
-    }
-
+    #stopLaunchingBtn { background:#FF4444; box-shadow:0 2px 5px rgba(255,68,68,0.4) }
+    #stopLaunchingBtn:hover { background:#cc3333 }
+    .sticky-header button:disabled { opacity:.5; cursor:not-allowed }
+    .sticky-header button.is-launching { background:#008CBA; cursor:default }
     .sticky-header a {
-      background-color: #37475A;
-      color: #00ccff;
-      text-decoration: none;
-      transition: background-color 0.2s ease;
+      background:#37475A; color:#00ccff; text-decoration:none;
+      transition:background-color .2s;
     }
-    .sticky-header button:hover, .sticky-header a:hover {
-      background-color: #cc7a00;
-    }
+    .sticky-header button:hover,
+    .sticky-header a:hover { background:#cc7a00 }
     .search-container {
-      /* Removed sticky positioning */
-      width: 100%;
-      text-align: center;
-      padding: 10px;
-      background: #232F3E;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      box-sizing: border-box;
-      /* Added margin-top to separate it from the header */
-      margin-top: 20px;
+      width:100%; text-align:center;
+      padding:10px; background:#232F3E;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+      box-sizing:border-box; margin-top:20px;
     }
     #searchBox {
-      width: 60%;
-      max-width: 500px; /* Limit search box width */
-      padding: 10px;
-      font-size: 1em; /* Relative to parent/body font size */
-      border-radius: 6px;
-      border: none;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-      color: #333;
+      width:60%; max-width:500px;
+      padding:10px; font-size:1em;
+      border-radius:6px; border:none;
+      box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);
+      color:#333;
     }
+    /* New Search button styling */
+    .search-container button {
+      padding:10px 15px; margin-left:8px;
+      font-size:1em; border:none; border-radius:6px;
+      background-color:#FF9900; color:#fff; cursor:pointer;
+      transition:background-color .2s;
+    }
+    .search-container button:hover { background-color:#cc7a00 }
     .category {
-      background: #37475A;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 800px;
-      text-align: left;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      background:#37475A; border-radius:10px;
+      padding:20px; margin:20px auto;
+      width:90%; max-width:800px;
+      text-align:left;
+      box-shadow:0 4px 8px rgba(0,0,0,0.3);
     }
     .category h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #FF9900;
-      padding-bottom: 5px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.2em; /* Slightly larger for headings */
+      margin:0 0 10px;
+      border-bottom:1px solid #FF9900;
+      padding-bottom:5px;
+      cursor:pointer;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:1.2em;
     }
-    /* Style for actively launching category headers */
     .category h3.is-launching {
-        background-color: #008CBA; /* A blue to indicate active/loading */
-        color: white;
-        opacity: 1;
-        cursor: default;
-        border-bottom: 1px solid #008CBA; /* Match border color */
+      background:#008CBA; color:#fff; cursor:default;
+      border-bottom:1px solid #008CBA;
     }
-
-    /* Arrow styling */
     .category.expanded h3::after {
-        content: '▼'; /* Down-pointing triangle for expanded */
-        margin-left: 10px;
-        font-size: 1em;
-        font-weight: normal;
-        color: #FF9900;
+      content:'▼'; margin-left:10px; font-size:1em; color:#FF9900;
     }
     .category:not(.expanded) h3::after {
-        content: '▶'; /* Right-pointing triangle for collapsed */
-        margin-left: 10px;
-        font-size: 1em;
-        font-weight: normal;
-        color: #FF9900;
+      content:'▶'; margin-left:10px; font-size:1em; color:#FF9900;
     }
     .links {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed rgba(255,255,255,0.2);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 10px; /* Space between items in both rows/columns */
+      margin-top:10px; padding-top:10px;
+      border-top:1px dashed rgba(255,255,255,0.2);
+      display:flex; flex-wrap:wrap; justify-content:flex-start; gap:10px;
     }
-    /* Adjusted .link-item for flex container */
     .link-item {
-      color: #00ccff;
-      display: inline-block;
-      margin: 0;
-      padding: 8px 12px; /* Add some padding to make clickable area larger */
-      text-decoration: none;
-      transition: color 0.2s ease, background-color 0.2s ease;
-      font-size: 1em;
-      background-color: rgba(0,0,0,0.1); /* Subtle background for better visual separation */
-      border-radius: 6px;
-
-      /* Default to 3 columns on larger screens */
-      flex-basis: calc(33.33% - 10px); /* 3 items per row with 10px gap */
-      max-width: calc(33.33% - 10px);
-      text-align: center; /* Center text within each item */
-      box-sizing: border-box; /* Include padding and border in the width calculation */
+      background:rgba(0,0,0,0.1);
+      color:#00ccff; padding:8px 12px;
+      text-decoration:none; border-radius:6px;
+      transition:color .2s,background .2s;
+      font-size:1em; flex-basis:calc(33.33% - 10px);
+      max-width:calc(33.33% - 10px);
+      text-align:center; box-sizing:border-box;
     }
     .link-item:hover {
-      color: #66e0ff;
-      text-decoration: underline;
-      background-color: rgba(0,0,0,0.2);
+      background:rgba(0,0,0,0.2); color:#66e0ff;
+      text-decoration:underline;
     }
-
-    /* Styles for the "click to launch all" span */
-    .category h3 .launch-instruction { /* Added a class for targeting */
-        font-size: 0.8em;
-        color: #ccc;
-        white-space: nowrap; /* Prevent wrapping */
-        margin-left: 10px; /* Ensure space from the main title */
-        flex-shrink: 0; /* Prevent it from shrinking if main title is long */
-    }
-
-    /* Added display property for collapsed state */
-    .category:not(.expanded) .links {
-        display: none;
-    }
+    .category:not(.expanded) .links { display:none }
     .info-message {
-        background-color: #4CAF50; /* Green */
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 10000;
-        display: none; /* Hidden by default */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        font-size: 1em;
+      background:#4CAF50; color:#fff; padding:10px 20px;
+      border-radius:5px; position:fixed; bottom:20px;
+      left:50%; transform:translateX(-50%);
+      z-index:10000; display:none;
+      box-shadow:0 2px 5px rgba(0,0,0,0.3);
+      font-size:1em;
     }
-
-    /* Deal Sites Section */
     .deal-sites-container {
-      background: #37475A;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 40px auto 20px auto; /* More margin from categories above */
-      width: 90%;
-      max-width: 800px;
-      text-align: center; /* Center content within this box */
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      background:#37475A; border-radius:10px;
+      padding:20px; margin:40px auto 20px;
+      width:90%; max-width:800px; text-align:center;
+      box-shadow:0 4px 8px rgba(0,0,0,0.3);
     }
     .deal-sites-container h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #FF9900;
-      padding-bottom: 10px;
-      color: #FF9900;
+      margin:0 0 20px;
+      border-bottom:1px solid #FF9900;
+      padding-bottom:10px; color:#FF9900;
     }
     .deal-site-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center; /* Center the deal site links */
-      gap: 15px; /* Space between deal site links */
+      display:flex; flex-wrap:wrap;
+      justify-content:center; gap:15px;
     }
     .deal-site-links a {
-      background-color: #111;
-      color: #00ccff;
-      padding: 10px 15px;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background-color 0.2s ease, color 0.2s ease;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background:#111; color:#00ccff;
+      padding:10px 15px; border-radius:6px;
+      text-decoration:none; font-weight:bold;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+      transition:background .2s,color .2s;
     }
     .deal-site-links a:hover {
-      background-color: #FF9900;
-      color: white;
+      background:#FF9900; color:#fff;
     }
-
-    /* Styles for the Minimize/Expand All button */
-    #toggleAllCategoriesBtn { /* Renamed ID */
-        background-color: #37475A; /* Darker blue-gray, similar to general category */
-        color: white;
-        padding: 10px 15px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1em;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        border: 1px solid #FF9900; /* Orange border to stand out slightly */
-        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    #toggleAllCategoriesBtn {
+      background:#37475A; color:#fff;
+      padding:10px 15px; border-radius:6px;
+      cursor:pointer; font-size:1em;
+      margin:20px 0 10px;
+      border:1px solid #FF9900;
+      transition:background .2s,border-color .2s;
     }
     #toggleAllCategoriesBtn:hover {
-        background-color: #FF9900; /* Highlight on hover */
-        color: white;
-        border-color: #FF9900;
+      background:#FF9900; color:#fff; border-color:#FF9900;
     }
-
-
-    /* Responsive adjustments */
-    @media (max-width: 1024px) { /* New breakpoint for tablets/medium screens */
-        .link-item {
-            flex-basis: calc(50% - 10px); /* 2 items per row */
-            max-width: calc(50% - 10px);
-        }
-        /* Sticky header select/button items start going to three columns */
-        .sticky-header select, .sticky-header button {
-            flex-basis: calc(33.33% - 15px); /* Start at 3 columns or wrap to 2 earlier if needed */
-            max-width: calc(33.33% - 15px);
-        }
-        /* RFY, AFA, AI links are more flexible */
-        .sticky-header a {
-            flex-basis: auto; /* Allow them to take only the width they need */
-            max-width: fit-content; /* Ensure they don't grow too wide */
-            min-width: 0; /* Allow to shrink smaller than 100px */
-        }
+    @media(max-width:1024px){
+      .link-item{flex-basis:calc(50% -10px);max-width:calc(50% -10px)}
+      .sticky-header select,.sticky-header button{flex-basis:calc(33.33% -15px);max-width:calc(33.33% -15px)}
+      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0}
     }
-
-    /* Tablet and larger mobile (e.g., landscape mobile) */
-    @media (max-width: 768px) {
-        body {
-            font-size: 18px; /* Larger base font size for mobile */
-            /* Adjusted padding to give more space for the header when wrapped on mobile */
-            padding-top: 180px; /* Increased padding further for better spacing */
-            padding-bottom: 80px; /* Adjusted padding for mobile */
-        }
-        h1 {
-            font-size: 2em; /* Larger heading */
-        }
-        p {
-            font-size: 1.1em; /* Larger paragraph text */
-        }
-        .sticky-header {
-            justify-content: center; /* Center items when they wrap */
-            padding: 10px;
-            height: auto; /* Allow height to adjust based on content */
-        }
-        .sticky-header select, .sticky-header button {
-            flex-basis: calc(50% - 10px); /* Approx. 2 columns with padding/gap */
-            max-width: calc(50% - 10px);
-            font-size: 1.1em; /* Larger buttons/select */
-            text-align: center; /* Ensure text is centered within each button */
-        }
-        .sticky-header a { /* Specific rule for links */
-            flex-basis: auto; /* Allow items to take only the width they need */
-            max-width: fit-content; /* Ensure they don't grow too wide */
-            min-width: 0; /* Allow to shrink smaller than 100px */
-            font-size: 1.1em;
-            text-align: center;
-        }
-        .search-container {
-            margin-top: 15px; /* Adjust margin for mobile */
-        }
-        #searchBox {
-            width: 90%;
-            font-size: 1.1em; /* Larger search box text */
-        }
-        .category h3 {
-            font-size: 1.3em; /* Larger category headings */
-        }
-        .link-item {
-            font-size: 1.1em; /* Larger link items */
-            padding: 10px 15px; /* Adjust padding for mobile */
-            flex-basis: calc(50% - 10px); /* Force 2 columns on mobile */
-            max-width: calc(50% - 10px);
-            margin-bottom: 10px; /* Add margin between stacked items on mobile */
-        }
-        .info-message {
-            font-size: 1.1em;
-        }
-        .deal-site-links a {
-            width: 90%; /* Make links take full width on mobile */
-            margin: 5px 0;
-        }
+    @media(max-width:768px){
+      body{font-size:18px;padding-top:180px;padding-bottom:80px}
+      h1{font-size:2em}p{font-size:1.1em}
+      .sticky-header{justify-content:center;padding:10px;height:auto}
+      .sticky-header select,.sticky-header button{flex-basis:calc(50% -10px);max-width:calc(50% -10px);font-size:1.1em}
+      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0;font-size:1.1em}
+      .search-container{margin-top:15px}
+      #searchBox{width:90%;font-size:1.1em}
+      .category h3{font-size:1.3em}
+      .link-item{font-size:1.1em;padding:10px 15px;flex-basis:calc(50% -10px);max-width:calc(50% -10px);margin-bottom:10px}
+      .info-message{font-size:1.1em}
+      .deal-site-links a{width:90%;margin:5px 0}
     }
-
-    /* Extra small mobile screens (e.g., portrait mode on small phones) */
-    @media (max-width: 480px) {
-        body {
-          /* Adjusted padding for a fully stacked header (if it wraps to max lines) */
-          padding-top: 280px; /* Further increased padding for very small screens */
-        }
-        .sticky-header select, .sticky-header button {
-            flex-basis: calc(100% - 10px); /* Stack to 1 column on very small screens */
-            max-width: calc(100% - 10px);
-        }
-        .sticky-header a { /* Specific rule for links */
-            flex-basis: auto;
-            max-width: fit-content;
-            min-width: 0;
-            font-size: 1.1em;
-            text-align: center;
-        }
-        .search-container {
-            margin-top: 15px; /* Consistent margin */
-        }
+    @media(max-width:480px){
+      body{padding-top:280px}
+      .sticky-header select,.sticky-header button{flex-basis:calc(100% -10px);max-width:calc(100% -10px)}
+      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0;font-size:1.1em}
+      .search-container{margin-top:15px}
     }
   </style>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
+  <!-- GTM (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- /GTN (noscript) -->
 
   <div class="sticky-header">
     <select id="delay">
@@ -419,501 +221,336 @@
   </div>
 
   <div class="search-container">
-    <input type="text" id="searchBox" onkeydown="searchAmazon(event)" placeholder="Search Vine on Amazon...">
+    <input
+      type="text"
+      id="searchBox"
+      onkeydown="searchAmazon(event)"
+      placeholder="Search Vine on Amazon…">
+    <button type="button" onclick="searchAmazonClick()">Search</button>
   </div>
 
   <h1>Amazon Vine Link Launcher</h1>
   <p><strong>Select your desired delay, then click a category name to launch all its links in new tabs.</strong></p>
   <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFA, and AI.</p>
 
-  <!-- Toggle All Categories Button -->
   <button id="toggleAllCategoriesBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
-
   <div id="categories"></div>
-
   <div id="infoMessage"></div>
 
-  <!-- New section for Deal Sites -->
+  <!-- Deal Sites -->
   <div class="deal-sites-container">
     <h2>🔗 More Deal Sites</h2>
     <div class="deal-site-links">
-      <a href="https://www.jungle.deals/" target="_blank">Jungle.Deals</a>
-      <a href="https://www.dealsea.com/" target="_blank">Dealsea.com</a>
-      <a href="https://slickdeals.net/" target="_blank">Slickdeals</a>
-      <a href="https://www.dealnews.com/" target="_blank">DealNews</a>
-      <a href="https://www.woot.com/" target="_blank">Woot!</a>
+      <a href="https://www.jungle.deals/"   target="_blank">Jungle.Deals</a>
+      <a href="https://www.dealsea.com/"    target="_blank">Dealsea.com</a>
+      <a href="https://slickdeals.net/"     target="_blank">Slickdeals</a>
+      <a href="https://www.dealnews.com/"   target="_blank">DealNews</a>
+      <a href="https://www.woot.com/"       target="_blank">Woot!</a>
       <a href="https://www.bradsdeals.com/" target="_blank">Brad's Deals</a>
-      <a href="https://clarkdeals.com/" target="_blank">ClarkDeals</a>
+      <a href="https://clarkdeals.com/"     target="_blank">ClarkDeals</a>
     </div>
   </div>
-  <!-- End new section -->
 
   <script>
-    // Array to store setTimeout IDs for pending tab openings
+    // timeouts etc.
     let pendingTimeouts = [];
-
-    // References to buttons
+    let currentActiveLauncher = null;
     const launchAllButton = document.getElementById('launchAllBtn');
     const stopLaunchingButton = document.getElementById('stopLaunchingBtn');
     const creatorsListButton = document.getElementById('creatorsListBtn');
-    const toggleAllCategoriesButton = document.getElementById('toggleAllCategoriesBtn'); // Reference to the new button
+    const toggleAllCategoriesButton = document.getElementById('toggleAllCategoriesBtn');
+    const infoMessageElement = document.getElementById('infoMessage');
+    const container = document.getElementById('categories');
 
-    // Stores the element (button or h3) that is currently active in launching tabs
-    let currentActiveLauncher = null;
+    function showInfoMessage(msg,d=3000){
+      infoMessageElement.textContent=msg;
+      infoMessageElement.style.display='block';
+      setTimeout(()=>infoMessageElement.style.display='none',d);
+    }
 
-    // Defines the categories and their associated search terms.
-    // Each inner array contains [displayLabel, URLencodedSearchTerm].
-    const categories = {
-      "✨ Zero ETV Focus": [
-        ["Supplements", "Supplements"], ["Vitamins", "Vitamins"], ["Gummies", "Gummies"],
-        ["Shampoo", "Shampoo"], ["Conditioner", "Conditioner"], ["Lotion", "Lotion"],
-        ["Mascara", "Mascara"], ["Makeup", "Makeup"], ["Skincare", "Skincare"], ["Face Mask", "Face%20Mask"],
-        ["Makeup Brush", "Makeup%20Brush"], ["Bandages", "Bandages"], ["Brace", "Brace"], ["Reading Glasses", "Reading%20glasses"],
-        ["Coffee", "Coffee"], ["Tea", "Tea"], ["Snacks", "Snacks"], ["Ramen", "Ramen"],
-        ["Nuts", "Nuts"], ["Granola", "Granola"], ["Detergent", "Detergent"],
-        ["Pet Food", "Pet%20Food"], ["Pet Treats", "Pet%20Treats"], ["Diapers", "Diapers"],
-        ["Wipes", "Wipes"], ["Lubricant", "Lubricant"], ["Massager", "Massager"]
+    function searchAmazon(e){
+      if(e.key==='Enter'){
+        let t=document.getElementById('searchBox').value.trim();
+        if(!t){ return showInfoMessage("Please enter a search term.",2000); }
+        let f=encodeURIComponent(t);
+        window.open(`https://www.amazon.com/vine/vine-items?search=${f}`,'_blank');
+        showInfoMessage(`Searching Amazon Vine for "${t}"...`);
+      }
+    }
+    function searchAmazonClick(){
+      let t=document.getElementById('searchBox').value.trim();
+      if(!t){ return showInfoMessage("Please enter a search term.",2000); }
+      let f=encodeURIComponent(t);
+      window.open(`https://www.amazon.com/vine/vine-items?search=${f}`,'_blank');
+      showInfoMessage(`Searching Amazon Vine for "${t}"...`);
+    }
+
+    function getDelayValue(){
+      const v=document.getElementById('delay').value;
+      if(v==='random') return Math.floor(Math.random()*(10000-4000+1))+4000;
+      return parseInt(v,10);
+    }
+
+    function launchItems(items,prefix,elem,fixedDelay=null){
+      if(currentActiveLauncher&& currentActiveLauncher!==elem){
+        return showInfoMessage('Another launch sequence is active. Please stop it first.',4000);
+      }
+      if(elem.classList.contains('is-launching')){
+        return stopLaunching();
+      }
+      stopLaunching();
+      currentActiveLauncher=elem;
+      elem.classList.add('is-launching');
+      stopLaunchingButton.disabled=false;
+      launchAllButton.disabled=true;
+      creatorsListButton.disabled=true;
+      toggleAllCategoriesButton.disabled=true;
+      document.querySelectorAll('.category h3')
+        .forEach(h=>{ if(h!==elem){ h.style.pointerEvents='none'; h.style.opacity='0.7' }});
+      showInfoMessage(`${prefix} with delays...`);
+
+      let total=items.length,done=0,delaySum=0;
+      if(total===0){ resetLaunchButtons(); return showInfoMessage('No items to launch.',2000); }
+
+      items.forEach(([_,slug])=>{
+        const url=`https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const d=fixedDelay!==null?fixedDelay:getDelayValue();
+        const id=setTimeout(()=>{
+          window.open(url,'_blank');
+          done++;
+          pendingTimeouts=pendingTimeouts.filter(x=>x!==id);
+          if(done===total){
+            setTimeout(()=>{
+              if(pendingTimeouts.length===0 && currentActiveLauncher===elem){
+                resetLaunchButtons();
+                showInfoMessage('All tabs launched!',2000);
+              }
+            },500);
+          }
+        },delaySum);
+        pendingTimeouts.push(id);
+        delaySum+=d;
+      });
+    }
+
+    function resetLaunchButtons(){
+      pendingTimeouts.forEach(clearTimeout);
+      pendingTimeouts=[];
+      launchAllButton.disabled=false;
+      creatorsListButton.disabled=false;
+      stopLaunchingButton.disabled=true;
+      toggleAllCategoriesButton.disabled=false;
+      launchAllButton.classList.remove('is-launching');
+      creatorsListButton.classList.remove('is-launching');
+      document.querySelectorAll('.category h3').forEach(h=>{
+        h.style.pointerEvents='auto';
+        h.style.opacity='1';
+        h.classList.remove('is-launching');
+        const span=h.querySelector('.launch-instruction');
+        if(span&&span.dataset.original){
+          span.textContent=span.dataset.original;
+          delete span.dataset.original;
+        }
+      });
+      currentActiveLauncher=null;
+    }
+
+    function launchAll(btn){
+      const all=Object.values(categories).flat();
+      launchItems(all,'Launching all stored links',btn);
+    }
+
+    function launchCreatorsList(btn){
+      launchItems(creatorsListItems,'Launching Creators List',btn,8000);
+    }
+
+    function stopLaunching(){
+      if(pendingTimeouts.length) showInfoMessage('Tab launching stopped!',2000);
+      resetLaunchButtons();
+    }
+
+    function toggleAllCategories(){
+      stopLaunching();
+      const all=document.querySelectorAll('.category');
+      let any=Array.from(all).some(d=>d.classList.contains('expanded'));
+      if(any){
+        all.forEach(d=>d.classList.remove('expanded'));
+        toggleAllCategoriesButton.textContent='Expand All Categories';
+        showInfoMessage('All categories minimized.',2000);
+      } else {
+        all.forEach(d=>d.classList.add('expanded'));
+        toggleAllCategoriesButton.textContent='Minimize All Categories';
+        showInfoMessage('All categories expanded.',2000);
+      }
+    }
+
+    function toggleCategory(div){
+      if(!currentActiveLauncher){
+        div.classList.toggle('expanded');
+        if(div.classList.contains('expanded')){
+          div.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+        updateToggleAllCategoriesButtonState();
+      } else if(currentActiveLauncher===div.querySelector('h3')){
+        stopLaunching();
+      } else {
+        showInfoMessage('A launch sequence is active. Please stop it first.',4000);
+      }
+    }
+
+    function updateToggleAllCategoriesButtonState(){
+      const any=Array.from(document.querySelectorAll('.category'))
+        .some(d=>d.classList.contains('expanded'));
+      toggleAllCategoriesButton.textContent=any
+        ?'Minimize All Categories'
+        :'Expand All Categories';
+    }
+
+    // ==== Your full categories object ====
+    const categories={
+      "✨ Zero ETV Focus":[
+        ["Supplements","Supplements"],["Vitamins","Vitamins"],["Gummies","Gummies"],
+        ["Shampoo","Shampoo"],["Conditioner","Conditioner"],["Lotion","Lotion"],
+        ["Mascara","Mascara"],["Makeup","Makeup"],["Skincare","Skincare"],
+        ["Face Mask","Face%20Mask"],["Makeup Brush","Makeup%20Brush"],
+        ["Bandages","Bandages"],["Brace","Brace"],["Reading Glasses","Reading%20glasses"],
+        ["Coffee","Coffee"],["Tea","Tea"],["Snacks","Snacks"],["Ramen","Ramen"],
+        ["Nuts","Nuts"],["Granola","Granola"],["Detergent","Detergent"],
+        ["Pet Food","Pet%20Food"],["Pet Treats","Pet%20Treats"],["Diapers","Diapers"],
+        ["Wipes","Wipes"],["Lubricant","Lubricant"],["Massager","Massager"]
       ],
-      "🚗 Automotive & Powersports": [
-        ["Camry 2011", "Camry%202011"], ["Civic 2006", "Civic%202006"], ["CR-V 2007", "CR-V%202007"],
-        ["Express 1500", "Express%201500"], ["Dash Cam", "Dash%20cam"], ["Wiper", "Wiper"],
-        ["Relay Switch", "Relay%20switch"], ["TRX250EX", "TRX250EX"], ["Sportsman 570", "Sportsman%20570"],
-        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"],
-        // Added automotive and powersports items:
-        ["Car Organizer", "Car%20Organizer"], ["Tire Pressure Monitor", "Tire%20Pressure%20Monitor"],
-        ["Jump Starter Cable", "Jump%20Starter%20Cable"], ["Car Cover", "Car%20Cover"],
-        ["Motorcycle Phone Mount", "Motorcycle%20Phone%20Mount"], ["ATV Winch", "ATV%20Winch"],
-        ["Car Cleaning Kit", "Car%20Cleaning%20Kit"], ["LED Headlight", "LED%20Headlight"],
-        ["Seat Covers", "Seat%20Covers"], ["Car Polish", "Car%20Polish"]
+      "🚗 Automotive & Powersports":[
+        ["Camry 2011","Camry%202011"],["Civic 2006","Civic%202006"],
+        ["CR-V 2007","CR-V%202007"],["Express 1500","Express%201500"],
+        ["Dash Cam","Dash%20cam"],["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+        ["TRX250EX","TRX250EX"],["Sportsman 570","Sportsman%20570"],
+        ["400LTZ","400LTZ"],["LTZ 400","LTZ%20400"],["NHX110","NHX110"],
+        ["Phone Holder","Phone%20holder"],["Car Organizer","Car%20Organizer"],
+        ["Tire Pressure Monitor","Tire%20Pressure%20Monitor"],
+        ["Jump Starter Cable","Jump%20Starter%20Cable"],["Car Cover","Car%20Cover"],
+        ["Motorcycle Phone Mount","Motorcycle%20Phone%20Mount"],["ATV Winch","ATV%20Winch"],
+        ["Car Cleaning Kit","Car%20Cleaning%20Kit"],["LED Headlight","LED%20Headlight"],
+        ["Seat Covers","Seat%20Covers"],["Car Polish","Car%20Polish"]
       ],
-      "🧰 Tools & Home Improvement": [
-        ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
-        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"],
-        ["Electric Kettle", "Electric%20Kettle"], ["Smart Lighting", "Smart%20Lighting"], ["Cookware", "Cookware"],
-        ["Air Fryer", "Air%20Fryer"], ["Heated Blanket", "Heated%20Blanket"]
+      "🧰 Tools & Home Improvement":[
+        ["Makita","Makita"],["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],
+        ["Smart Plug","Smart%20plug"],["IP68","IP68"],["Electric Kettle","Electric%20Kettle"],
+        ["Smart Lighting","Smart%20Lighting"],["Cookware","Cookware"],["Air Fryer","Air%20Fryer"],
+        ["Heated Blanket","Heated%20Blanket"]
       ],
-      "📱 Tech & Electronics": [
-        ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
-        ["Robotic", "Robotic"], ["Bluetooth", "Bluetooth"], ["HDMI", "HDMI"],
-        ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
-        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"],
-        ["Webcam", "Webcam"], ["Microphone", "Microphone"], ["Monitor Stand", "Monitor%20Stand"],
-        ["Wi-Fi Extender", "Wi%20Fi%20Extender"]
+      "📱 Tech & Electronics":[
+        ["Wireless","Wireless"],["Google 9 XL","Google%209%20XL"],["Robot","Robot"],
+        ["Robotic","Robotic"],["Bluetooth","Bluetooth"],["HDMI","HDMI"],
+        ["USB Hub","USB%20Hub"],["Ethernet","Ethernet"],["Keyboard","Keyboard"],
+        ["Headphones","Headphones"],["Streaming","Streaming"],
+        ["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],["Webcam","Webcam"],
+        ["Microphone","Microphone"],["Monitor Stand","Monitor%20Stand"],
+        ["Wi-Fi Extender","Wi%20Fi%20Extender"]
       ],
-      "🧔 Grooming & Personal Care": [
-        ["Shaver", "Shaver"], ["Bald", "Bald"], ["Hair Dryer", "Hair%20Dryer"], ["Curling Iron", "Curling%20Iron"],
-        ["Mascara", "Mascara"], ["Manicure", "Manicure"], ["Nail Polish", "Nail%20Polish"],
-        ["Hair Brush", "Hair%20Brush"], ["Hair Trimmer", "Hair%20Trimmer"], ["Beard", "Beard"]
+      "🧔 Grooming & Personal Care":[
+        ["Shaver","Shaver"],["Bald","Bald"],["Hair Dryer","Hair%20Dryer"],
+        ["Curling Iron","Curling%20Iron"],["Mascara","Mascara"],
+        ["Manicure","Manicure"],["Nail Polish","Nail%20Polish"],
+        ["Hair Brush","Hair%20Brush"],["Hair Trimmer","Hair%20Trimmer"],["Beard","Beard"]
       ],
-      "👓 Vision & Eyewear": [
-        ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"]
+      "👓 Vision & Eyewear":[
+        ["Reading Glasses","Reading%20glasses"],["Readers","Readers"],["Glasses","Glasses"]
       ],
-      "🍬 Health & Wellness": [
-        ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
-        ["Sex", "Sex"], ["Vitamin", "Vitamin"], ["Protein", "Protein"],
-        ["Blood Pressure Monitor", "Blood%20Pressure%20Monitor"],
-        ["Thermometer", "Thermometer"], ["First Aid", "First%20Aid"], ["Brace", "Brace"]
+      "🍬 Health & Wellness":[
+        ["Gummies","Gummies"],["Multivitamins","Multivitamins"],["Probiotics","Probiotics"],
+        ["Sex","Sex"],["Vitamin","Vitamin"],["Protein","Protein"],
+        ["Blood Pressure Monitor","Blood%20Pressure%20Monitor"],
+        ["Thermometer","Thermometer"],["First Aid","First%20Aid"],["Brace","Brace"]
       ],
-      "☀️ Outdoors & Solar": [
-        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"],
-        ["Camping", "Camping"], ["Hiking", "Hiking"], ["Cooler", "Cooler"]
+      "☀️ Outdoors & Solar":[
+        ["Solar","Solar"],["Outdoor","Outdoor"],["Zapper","Zapper"],["Seed","Seed"],
+        ["Pool","Pool"],["Camping","Camping"],["Hiking","Hiking"],["Cooler","Cooler"]
       ],
-      "🐾 Pet Care": [
-        ["Cat Tree", "Cat%20Tree"], ["Dog Bed", "Dog%20Bed"], ["Pet Camera", "Pet%20Camera"],
-        ["Pet Feeder", "Pet%20Feeder"], ["Water Fountain (Pet)", "Water%20Fountain%20Pet"],
-        ["Dog Toys", "Dog%20Toys"], ["Cat Toys", "Cat%20Toys"], ["Pet Grooming", "Pet%20Grooming"],
-        ["Poop Bags", "Poop%20Bags"]
+      "🐾 Pet Care":[
+        ["Cat Tree","Cat%20Tree"],["Dog Bed","Dog%20Bed"],["Pet Camera","Pet%20Camera"],
+        ["Pet Feeder","Pet%20Feeder"],["Water Fountain (Pet)","Water%20Fountain%20Pet"],
+        ["Dog Toys","Dog%20Toys"],["Cat Toys","Cat%20Toys"],["Pet Grooming","Pet%20Grooming"],
+        ["Poop Bags","Poop%20Bags"]
       ],
-      "👶 Baby & Kids": [
-        ["Baby Monitor", "Baby%20Monitor"], ["Baby Carrier", "Baby%20Carrier"], ["Stroller Organizer", "Stroller%20Organizer"],
-        ["Diaper Bag", "Diaper%20Bag"], ["Kids Toys", "Kids%20Toys"], ["Baby Clothes", "Baby%20Clothes"],
-        ["Infant Seat", "Infant%20Seat"], ["Baby Gate", "Baby%20Gate"]
+      "👶 Baby & Kids":[
+        ["Baby Monitor","Baby%20Monitor"],["Baby Carrier","Baby%20Carrier"],
+        ["Stroller Organizer","Stroller%20Organizer"],["Diaper Bag","Diaper%20Bag"],
+        ["Kids Toys","Kids%20Toys"],["Baby Clothes","Baby%20Clothes"],
+        ["Infant Seat","Infant%20Seat"],["Baby Gate","Baby%20Gate"]
       ],
-      "🏷️ Name Brands": [
-        ["Sony", "Sony"], ["Samsung", "Samsung"], ["LG", "LG"], ["Apple", "Apple"], ["Anker", "Anker"],
-        ["JBL", "JBL"], ["Bose", "Bose"], ["Logitech", "Logitech"], ["Razer", "Razer"],
-        ["Acer", "Acer"], ["Asus", "Asus"], ["TP-Link", "TP-Link"], ["Netgear", "Netgear"], ["Corsair", "Corsair"],
-        ["Dyson", "Dyson"], ["Shark", "Shark"], ["iRobot", "iRobot"], ["Keurig", "Keurig"], ["Ninja", "Ninja"],
-        ["Instant Pot", "Instant%20Pot"], ["Eufy", "Eufy"], ["Tineco", "Tineco"], ["Philips", "Philips"], ["Oral-B", "Oral-B"],
-        ["DeWalt", "DeWalt"], ["Milwaukee", "Milwaukee"], ["Makita", "Makita"], ["Ryobi", "Ryobi"], ["Kobalt", "Kobalt"],
-        ["Craftsman", "Craftsman"], ["Husky", "Husky"], ["Garmin", "Garmin"], ["Goodyear", "Goodyear"],
-        ["Bosch", "Bosch"], ["Meguiar’s", "Meguiar's"], ["Rain-X", "Rain-X"], ["Thule", "Thule"], ["WeatherTech", "WeatherTech"]
+      "🏷️ Name Brands":[
+        ["Sony","Sony"],["Samsung","Samsung"],["LG","LG"],["Apple","Apple"],["Anker","Anker"],
+        ["JBL","JBL"],["Bose","Bose"],["Logitech","Logitech"],["Razer","Razer"],
+        ["Acer","Acer"],["Asus","Asus"],["TP-Link","TP-Link"],["Netgear","Netgear"],
+        ["Corsair","Corsair"],["Dyson","Dyson"],["Shark","Shark"],["iRobot","iRobot"],
+        ["Keurig","Keurig"],["Ninja","Ninja"],["Instant Pot","Instant%20Pot"],
+        ["Eufy","Eufy"],["Tineco","Tineco"],["Philips","Philips"],["Oral-B","Oral-B"],
+        ["DeWalt","DeWalt"],["Milwaukee","Milwaukee"],["Makita","Makita"],
+        ["Ryobi","Ryobi"],["Kobalt","Kobalt"],["Craftsman","Craftsman"],
+        ["Husky","Husky"],["Garmin","Garmin"],["Goodyear","Goodyear"],
+        ["Bosch","Bosch"],["Meguiar’s","Meguiar's"],["Rain-X","Rain-X"],
+        ["Thule","Thule"],["WeatherTech","WeatherTech"]
       ]
     };
 
-    // Define the Creators list items for the new button
-    const creatorsListItems = [
-        ["Camry 2011", "Camry%202011"], ["Civic 2006", "Civic%202006"], ["CR-V 2007", "CR-V%202007"],
-        ["Express 1500", "Express%201500"], ["Dash Cam", "Dash%20cam"], ["Wiper", "Wiper"],
-        ["Relay Switch", "Relay%20switch"], ["TRX250EX", "TRX250EX"], ["Sportsman 570", "Sportsman%20570"],
-        ["400LTZ", "400LTZ"], ["LTZ 400", "LTZ%20400"], ["NHX110", "NHX110"], ["Phone Holder", "Phone%20holder"],
-        ["Tool", "Tool"], ["Makita", "Makita"], ["Tool Kit", "Tool%20kit"], ["Socket Set", "Socket%20set"],
-        ["Smart Plug", "Smart%20plug"], ["IP68", "IP68"], ["Tool", "Tool"],
-        ["Wireless", "Wireless"], ["Google 9 XL", "Google%209%20XL"], ["Robot", "Robot"],
-        ["Robotic", "Robotic"], ["Bluetooth", "Bluetooth"], ["HDMI", "HDMI"],
-        ["USB Hub", "USB%20Hub"], ["Ethernet", "Ethernet"], ["Keyboard", "Keyboard"],
-        ["Headphones", "Headphones"], ["Streaming", "Streaming"], ["iPhone 16 Pro 6.3", "iPhone%2016%20Pro%206.3"],
-        ["Beard", "Beard"], ["Shaver", "Shaver"], ["Bald", "Bald"],
-        ["Reading Glasses", "Reading%20glasses"], ["Readers", "Readers"], ["Glasses", "Glasses"],
-        ["Hearing Aid", "Hearing%20Aid"],
-        ["Gummies", "Gummies"], ["Multivitamins", "Multivitamins"], ["Probiotics", "Probiotics"],
-        ["Sex", "Sex"], ["Vitamin", "Vitamin"],
-        ["Solar", "Solar"], ["Outdoor", "Outdoor"], ["Zapper", "Zapper"], ["Seed", "Seed"], ["Pool", "Pool"]
+    // Creators list:
+    const creatorsListItems=[
+      ["Camry 2011","Camry%202011"],["Civic 2006","Civic%202006"],
+      ["CR-V 2007","CR-V%202007"],["Express 1500","Express%201500"],
+      ["Dash Cam","Dash%20cam"],["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+      ["TRX250EX","TRX250EX"],["Sportsman 570","Sportsman%20570"],
+      ["400LTZ","400LTZ"],["LTZ 400","LTZ%20400"],["NHX110","NHX110"],
+      ["Phone Holder","Phone%20holder"],["Tool","Tool"],["Makita","Makita"],
+      ["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],["Smart Plug","Smart%20plug"],
+      ["IP68","IP68"],["Wireless","Wireless"],["Google 9 XL","Google%209%20XL"],
+      ["Robot","Robot"],["Robotic","Robotic"],["Bluetooth","Bluetooth"],
+      ["HDMI","HDMI"],["USB Hub","USB%20Hub"],["Ethernet","Ethernet"],
+      ["Keyboard","Keyboard"],["Headphones","Headphones"],["Streaming","Streaming"],
+      ["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],["Beard","Beard"],
+      ["Shaver","Shaver"],["Bald","Bald"],["Reading Glasses","Reading%20glasses"],
+      ["Readers","Readers"],["Glasses","Glasses"],["Hearing Aid","Hearing%20Aid"],
+      ["Gummies","Gummies"],["Multivitamins","Multivitamins"],["Probiotics","Probiotics"],
+      ["Sex","Sex"],["Vitamin","Vitamin"],["Solar","Solar"],["Outdoor","Outdoor"],
+      ["Zapper","Zapper"],["Seed","Seed"],["Pool","Pool"]
     ];
 
-
-    const container = document.getElementById("categories");
-    const infoMessageElement = document.getElementById("infoMessage");
-
-    /**
-     * Displays a temporary info message to the user.
-     * @param {string} message - The message to display.
-     * @param {number} duration - How long to display the message in milliseconds.
-     */
-    function showInfoMessage(message, duration = 3000) {
-      infoMessageElement.textContent = message;
-      infoMessageElement.style.display = 'block';
-      setTimeout(() => {
-        infoMessageElement.style.display = 'none';
-      }, duration);
-    }
-
-    /**
-     * Handles Amazon search when Enter key is pressed in the search box.
-     * @param {KeyboardEvent} e - The keyboard event object.
-     */
-    function searchAmazon(e) {
-      if (e.key === 'Enter') {
-        const term = document.getElementById('searchBox').value.trim();
-        if (!term) {
-            showInfoMessage("Please enter a search term.", 2000);
-            return;
+    // Build the UI
+    Object.entries(categories).forEach(([title,items])=>{
+      const div=document.createElement('div');
+      div.className='category expanded';
+      const h3=document.createElement('h3');
+      h3.textContent=title;
+      const span=document.createElement('span');
+      span.className='launch-instruction';
+      span.textContent=' [click to launch all]';
+      span.dataset.original=span.textContent;
+      h3.appendChild(span);
+      h3.onclick=e=>{
+        if(h3.classList.contains('is-launching')) return stopLaunching();
+        if(currentActiveLauncher&&currentActiveLauncher!==h3){
+          return showInfoMessage('Another launch is active. Stop it first.',4000);
         }
-        const formatted = encodeURIComponent(term);
-        window.open(`https://www.amazon.com/vine/vine-items?search=${formatted}`, '_blank');
-        showInfoMessage(`Searching Amazon Vine for "${term}"...`);
-      }
-    }
-
-    /**
-     * Gets the selected delay value from the dropdown.
-     * If "random" is selected, returns a random delay between 4 and 10 seconds.
-     * @returns {number} The delay in milliseconds.
-     */
-    function getDelayValue() {
-      const delaySetting = document.getElementById("delay").value;
-      if (delaySetting === "random") {
-        return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
-      }
-      return parseInt(delaySetting, 10);
-    }
-
-    /**
-     * Common function to launch a list of items with a given delay and manage pending timeouts.
-     * It also handles visual feedback for the initiating element.
-     * @param {Array<Array<string>>} items - An array of [label, slug] pairs.
-     * @param {string} messagePrefix - Prefix for the info message.
-     * @param {HTMLElement} initiatorElement - The button or h3 that triggered the launch.
-     * @param {number} fixedDelay - Optional fixed delay for the list, overrides dropdown.
-     */
-    function launchItems(items, messagePrefix, initiatorElement, fixedDelay = null) {
-        // Only proceed if no launch is currently active OR if this initiator is the current active one (meaning a "stop" click)
-        if (currentActiveLauncher && currentActiveLauncher !== initiatorElement) {
-            showInfoMessage('Another launch sequence is active. Please stop it first using the active button or the global Stop button.', 4000);
-            return;
-        }
-
-        // If this element is already launching, it means the user wants to stop it
-        if (initiatorElement.classList.contains('is-launching')) {
-            stopLaunching();
-            return;
-        }
-
-        // --- Initiate Launch ---
-        stopLaunching(); // Clear any stale timeouts and reset UI
-        currentActiveLauncher = initiatorElement;
-
-        // Apply visual active state
-        initiatorElement.classList.add('is-launching');
-        stopLaunchingButton.disabled = false;
-
-        // Special handling for category h3 text change
-        if (initiatorElement.tagName === 'H3') {
-            const launchInstructionSpan = initiatorElement.querySelector('.launch-instruction');
-            if (launchInstructionSpan) {
-                // Store original text if not already stored (first time this h3 is an initiator)
-                if (!launchInstructionSpan.dataset.originalText) {
-                    launchInstructionSpan.dataset.originalText = launchInstructionSpan.textContent;
-                }
-                launchInstructionSpan.textContent = " [Launching... Click to Stop]";
-            }
-        }
-
-        // Disable other primary launch buttons and other category h3s
-        launchAllButton.disabled = true;
-        creatorsListButton.disabled = true;
-        toggleAllCategoriesButton.disabled = true; /* Disable during launch */
-
-        document.querySelectorAll('.category h3').forEach(h3 => {
-            if (h3 !== initiatorElement) {
-                h3.style.pointerEvents = 'none'; /* Disable clicks */
-                h3.style.opacity = '0.7'; /* Visually indicate disabled */
-            }
-        });
-
-        showInfoMessage(`${messagePrefix} with delays...`);
-
-        let totalDelay = 0;
-        let completedCount = 0;
-        const totalItems = items.length;
-
-        if (totalItems === 0) {
-            resetLaunchButtons();
-            showInfoMessage('No items to launch.', 2000);
-            return;
-        }
-
-        items.forEach(([_, slug], index) => {
-            const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-            const delay = fixedDelay !== null ? fixedDelay : getDelayValue();
-
-            const timeoutId = setTimeout(() => {
-                window.open(url, '_blank');
-                completedCount++;
-                // Remove this timeout ID from the pending list once it fires
-                pendingTimeouts = pendingTimeouts.filter(id => id !== timeoutId);
-
-                // If all items from this launch sequence have been dispatched
-                if (completedCount === totalItems) {
-                    // Give a small buffer before resetting, in case last tab needs to finish opening
-                    setTimeout(() => {
-                        // Only reset if no manual stop occurred and this was the active launcher
-                        if (pendingTimeouts.length === 0 && currentActiveLauncher === initiatorElement) {
-                            resetLaunchButtons();
-                            showInfoMessage('All tabs launched!', 2000);
-                        }
-                    }, 500);
-                }
-            }, totalDelay);
-            pendingTimeouts.push(timeoutId);
-            totalDelay += delay;
-        });
-    }
-
-    /**
-     * Resets the visual state of launch buttons and re-enables them.
-     */
-    function resetLaunchButtons() {
-        // Clear all pending timeouts just in case (e.g., if manually stopped)
-        pendingTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-        pendingTimeouts = [];
-
-        // Re-enable all primary launch buttons
-        launchAllButton.disabled = false;
-        creatorsListButton.disabled = false;
-        stopLaunchingButton.disabled = true;
-        toggleAllCategoriesButton.disabled = false; /* Re-enable */
-
-
-        // Remove active class from buttons
-        launchAllButton.classList.remove('is-launching');
-        creatorsListButton.classList.remove('is-launching');
-
-        // Reset all category h3s
-        document.querySelectorAll('.category h3').forEach(h3 => {
-            h3.style.pointerEvents = 'auto'; /* Enable clicks */
-            h3.style.opacity = '1'; /* Reset opacity */
-            h3.classList.remove('is-launching'); // Remove active class
-
-            const launchInstructionSpan = h3.querySelector('.launch-instruction');
-            if (launchInstructionSpan && launchInstructionSpan.dataset.originalText) {
-                // Restore original text content
-                launchInstructionSpan.textContent = launchInstructionSpan.dataset.originalText;
-                // Clean up the stored original text
-                delete launchInstructionSpan.dataset.originalText;
-            }
-        });
-
-        currentActiveLauncher = null; // Clear the active launcher reference
-    }
-
-    /**
-     * Launches all links within a specific category with the chosen delay.
-     * @param {Array<Array<string>>} items - An array of [label, slug] pairs for the category.
-     * @param {string} categoryTitle - The title of the category for the info message.
-     * @param {HTMLElement} initiatorElement - The h3 element that triggered the launch.
-     */
-    function launchCategory(items, categoryTitle, initiatorElement) {
-      launchItems(items, `Launching all links for "${categoryTitle}"`, initiatorElement);
-    }
-
-    /**
-     * Launches all links from all categories with the chosen delay.
-     * @param {HTMLElement} initiatorElement - The button that triggered the launch.
-     */
-    function launchAll(initiatorElement) {
-      const allItems = Object.values(categories).flat();
-      launchItems(allItems, "Launching all stored links", initiatorElement);
-    }
-
-    /**
-     * Launches the predefined Creators list items with an 8-second delay.
-     * @param {HTMLElement} initiatorElement - The button that triggered the launch.
-     */
-    function launchCreatorsList(initiatorElement) {
-      const delay = 8000; // 8 seconds delay as requested for Creators list
-      launchItems(creatorsListItems, `Launching Creators List`, initiatorElement, delay);
-    }
-
-    /**
-     * Stops any ongoing tab launching sequence. This is a global stop.
-     */
-    function stopLaunching() {
-        if (pendingTimeouts.length > 0) {
-            showInfoMessage('Tab launching stopped!', 2000);
-        }
-        resetLaunchButtons(); // This function already handles clearing timeouts and resetting UI
-    }
-
-    /**
-     * Toggles all categories between expanded and minimized states.
-     * Updates the button text accordingly.
-     */
-    function toggleAllCategories() {
-        stopLaunching(); // Stop any active launch before manipulating categories
-        const allCategoryDivs = document.querySelectorAll('.category');
-        let anyExpanded = false;
-
-        // Check if any category is currently expanded
-        for (const categoryDiv of allCategoryDivs) {
-            if (categoryDiv.classList.contains('expanded')) {
-                anyExpanded = true;
-                break;
-            }
-        }
-
-        if (anyExpanded) {
-            // If any are expanded, minimize all
-            allCategoryDivs.forEach(categoryDiv => {
-                categoryDiv.classList.remove('expanded');
-            });
-            toggleAllCategoriesButton.textContent = "Expand All Categories";
-            showInfoMessage('All categories minimized.', 2000);
+        if(e.target.classList.contains('launch-instruction')){
+          launchItems(items,`Launching all links for "${title}"`,h3);
         } else {
-            // If all are minimized, expand all
-            allCategoryDivs.forEach(categoryDiv => {
-                categoryDiv.classList.add('expanded');
-            });
-            toggleAllCategoriesButton.textContent = "Minimize All Categories";
-            showInfoMessage('All categories expanded.', 2000);
-        }
-    }
-
-
-    /**
-     * Toggles the visibility of links within a category and updates its expanded state.
-     * @param {HTMLElement} categoryDiv - The div element representing the category.
-     */
-    function toggleCategory(categoryDiv) {
-        // Only toggle if no launch is active AND this category is not the current active launcher.
-        // This ensures a click on a launching H3 stops it, but otherwise allows normal toggle.
-        if (!currentActiveLauncher) { // Only allow manual collapse/expand if no launch is active
-             categoryDiv.classList.toggle('expanded');
-            // We only need to ensure scrolling if it's being expanded.
-            if (categoryDiv.classList.contains('expanded')) {
-                categoryDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            // Update the state of the toggleAllCategoriesButton
-            updateToggleAllCategoriesButtonState();
-        } else if (currentActiveLauncher === categoryDiv.querySelector('h3')) {
-            // If this category is the active launcher, the click already handled stopping it
-            // No need to do anything here for toggle
-        } else {
-            showInfoMessage('A launch sequence is active. Please stop it first.', 4000);
-        }
-    }
-
-    /**
-     * Updates the text of the "Minimize/Expand All Categories" button based on the current state.
-     */
-    function updateToggleAllCategoriesButtonState() {
-        const allCategoryDivs = document.querySelectorAll('.category');
-        let anyExpanded = false;
-        for (const categoryDiv of allCategoryDivs) {
-            if (categoryDiv.classList.contains('expanded')) {
-                anyExpanded = true;
-                break;
-            }
-        }
-        if (anyExpanded) {
-            toggleAllCategoriesButton.textContent = "Minimize All Categories";
-        } else {
-            toggleAllCategoriesButton.textContent = "Expand All Categories";
-        }
-    }
-
-
-    // --- Page Initialization ---
-    // Dynamically creates and appends category sections to the page.
-    for (const [title, items] of Object.entries(categories)) {
-      const div = document.createElement("div");
-      // Add 'expanded' class by default
-      div.className = "category expanded";
-
-      const h3 = document.createElement("h3");
-      h3.textContent = title; // Main text content for the category title
-      // Create a span for the launch instruction that will change
-      const launchInstruction = document.createElement("span");
-      launchInstruction.className = "launch-instruction"; // Add class for specific targeting
-      launchInstruction.textContent = " [click to launch all]"; // Default text
-      launchInstruction.dataset.originalText = launchInstruction.textContent; // Store original text
-      
-      h3.appendChild(launchInstruction);
-
-      // Event listener for toggling visibility AND launching based on click target
-      h3.onclick = (event) => {
-        const target = event.target;
-        const clickedH3 = event.currentTarget; // The h3 itself
-
-        // If this h3 is already the active launcher, clicking it again should stop the launch
-        if (clickedH3.classList.contains('is-launching')) {
-            stopLaunching();
-            return;
-        }
-
-        // If another launch is active globally (from a button or another h3)
-        if (currentActiveLauncher && currentActiveLauncher !== clickedH3) {
-            showInfoMessage('Another launch sequence is active. Please stop it first.', 4000);
-            return;
-        }
-
-        // If the click is specifically on the "launch all" span
-        if (target.classList.contains('launch-instruction')) {
-            launchCategory(items, title, clickedH3); // Pass the h3 element itself
-        } else {
-            // Otherwise, toggle the category's expanded state
-            toggleCategory(div);
+          toggleCategory(div);
         }
       };
       div.appendChild(h3);
-
-      const linksDiv = document.createElement("div");
-      linksDiv.className = "links"; // No initial display:none; here in JS
-
-      items.forEach(([label, slug]) => {
-        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.className = "link-item";
-        a.textContent = label;
+      const linksDiv=document.createElement('div');
+      linksDiv.className='links';
+      items.forEach(([lbl,slug])=>{
+        const a=document.createElement('a');
+        a.href=`https://www.amazon.com/vine/vine-items?search=${slug}`;
+        a.target='_blank';
+        a.className='link-item';
+        a.textContent=lbl;
         linksDiv.appendChild(a);
       });
-
       div.appendChild(linksDiv);
       container.appendChild(div);
-    }
-    // Update the button state on initial load
+    });
+
     updateToggleAllCategoriesButtonState();
   </script>
 </body>
