@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Amazon Vine Link Launcher</title>
+
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-PHVHKCDP');</script>
-  <!-- End Google Tag Manager -->
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GZPGM6JQG"></script>
   <script>
@@ -19,192 +20,357 @@
     gtag('js', new Date());
     gtag('config','G-4GZPGM6JQG');
   </script>
+
   <style>
+    :root {
+      --bg-dark: #19222d;
+      --card-bg: #232F3E;
+      --accent-orange: #FF9900;
+      --accent-hover: #e68a00;
+      --accent-blue: #00ccff;
+      --btn-bg: #37475A;
+      --text-main: #ffffff;
+      --text-sub: #d1d5db;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      background-color: #232F3E;
-      color: white;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       margin: 0;
-      padding-top: 100px;
-      padding-bottom: 100px;
-      text-align: center;
-      font-size: 16px;
+      padding: 0;
+      line-height: 1.5;
     }
-    h1,h2 { color: #FF9900 }
+
+    /* Sticky Header Layout */
     .sticky-header {
-      position: fixed; top:0; left:0; right:0;
-      background-color:#111; padding:15px 20px;
-      display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
-      z-index:9999; box-shadow:0 2px 5px rgba(0,0,0,0.4);
-      box-sizing:border-box; min-height:70px;
+      position: sticky;
+      top: 0;
+      background-color: #111111;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-bottom: 2px solid var(--accent-orange);
     }
+
     .sticky-header select,
     .sticky-header button,
     .sticky-header a {
-      font-size:1em; padding:8px 12px;
-      border:none; border-radius:6px; margin:0;
-      flex-shrink:0; flex-basis:auto; min-width:100px;
-      text-align:center; box-sizing:border-box;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+
     .sticky-header select {
-      background:#FF9900; color:#fff; cursor:pointer;
+      background: var(--accent-orange);
+      color: #111;
     }
-    .sticky-header button {
-      background:#FF9900; color:#fff;
-      cursor:pointer; transition:background-color .2s;
+
+    .sticky-header button.btn-primary {
+      background: var(--accent-orange);
+      color: #111;
     }
-    #stopLaunchingBtn { background:#FF4444; box-shadow:0 2px 5px rgba(255,68,68,0.4) }
-    #stopLaunchingBtn:hover { background:#cc3333 }
-    .sticky-header button:disabled { opacity:.5; cursor:not-allowed }
-    .sticky-header button.is-launching { background:#008CBA; cursor:default }
-    .sticky-header a {
-      background:#37475A; color:#00ccff; text-decoration:none;
-      transition:background-color .2s;
+
+    .sticky-header button.btn-primary:hover {
+      background: var(--accent-hover);
     }
-    .sticky-header button:hover,
-    .sticky-header a:hover { background:#cc7a00 }
+
+    #stopLaunchingBtn {
+      background: #dc2626;
+      color: #fff;
+    }
+    #stopLaunchingBtn:hover { background: #b91c1c; }
+    #stopLaunchingBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .sticky-header a.queue-link {
+      background: var(--btn-bg);
+      color: var(--accent-blue);
+    }
+    .sticky-header a.queue-link:hover {
+      background: #4b5d73;
+      color: #ffffff;
+    }
+
+    /* Floating Edge Button pinned to screen side */
+    .floating-edge-link {
+      position: fixed;
+      right: 0;
+      top: 45%;
+      transform: translateY(-50%);
+      background: var(--accent-orange);
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 8px 0 0 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-decoration: none;
+      z-index: 10000;
+      box-shadow: -3px 4px 12px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+    }
+    .floating-edge-link:hover {
+      background: var(--accent-hover);
+      padding-left: 18px;
+      color: #000;
+    }
+
+    /* Active Progress Display */
+    #progressBadge {
+      display: none;
+      background: #0284c7;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      text-align: center;
+    }
+
+    h1 { color: var(--accent-orange); margin: 20px 0 10px; font-size: 2.2rem; }
+    p.subtitle { color: var(--text-sub); margin-bottom: 20px; font-size: 1rem; }
+
+    /* Search Bar */
     .search-container {
-      width:100%; text-align:center;
-      padding:10px; background:#232F3E;
-      box-shadow:0 2px 5px rgba(0,0,0,0.2);
-      box-sizing:border-box; margin-top:20px;
+      margin: 20px auto 30px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      max-width: 600px;
     }
+
     #searchBox {
-      width:60%; max-width:500px;
-      padding:10px; font-size:1em;
-      border-radius:6px; border:none;
-      box-shadow:inset 0 1px 3px rgba(0,0,0,0.3);
-      color:#333;
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #4b5d73;
+      background: #2b3848;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
     }
-    /* New Search button styling */
+    #searchBox:focus {
+      border-color: var(--accent-orange);
+    }
+
     .search-container button {
-      padding:10px 15px; margin-left:8px;
-      font-size:1em; border:none; border-radius:6px;
-      background-color:#FF9900; color:#fff; cursor:pointer;
-      transition:background-color .2s;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--accent-orange);
+      color: #111;
+      cursor: pointer;
     }
-    .search-container button:hover { background-color:#cc7a00 }
+    .search-container button:hover { background-color: var(--accent-hover); }
+
+    /* Category Cards */
     .category {
-      background:#37475A; border-radius:10px;
-      padding:20px; margin:20px auto;
-      width:90%; max-width:800px;
-      text-align:left;
-      box-shadow:0 4px 8px rgba(0,0,0,0.3);
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 1px solid #2e3e52;
     }
-    .category h3 {
-      margin:0 0 10px;
-      border-bottom:1px solid #FF9900;
-      padding-bottom:5px;
-      cursor:pointer;
-      display:flex; justify-content:space-between; align-items:center;
-      font-size:1.2em;
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
     }
-    .category h3.is-launching {
-      background:#008CBA; color:#fff; cursor:default;
-      border-bottom:1px solid #008CBA;
+
+    .category-header h3 {
+      margin: 0;
+      color: var(--accent-orange);
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .category.expanded h3::after {
-      content:'▼'; margin-left:10px; font-size:1em; color:#FF9900;
+
+    .category-header .arrow {
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+      color: var(--accent-orange);
     }
-    .category:not(.expanded) h3::after {
-      content:'▶'; margin-left:10px; font-size:1em; color:#FF9900;
+
+    .category.expanded .arrow { transform: rotate(90deg); }
+
+    .category-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
+    .cat-launch-btn {
+      background: #10b981;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cat-launch-btn:hover { background: #059669; }
+
+    /* Link Tags inside Category */
     .links {
-      margin-top:10px; padding-top:10px;
-      border-top:1px dashed rgba(255,255,255,0.2);
-      display:flex; flex-wrap:wrap; justify-content:flex-start; gap:10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
+
     .link-item {
-      background:rgba(0,0,0,0.1);
-      color:#00ccff; padding:8px 12px;
-      text-decoration:none; border-radius:6px;
-      transition:color .2s,background .2s;
-      font-size:1em; flex-basis:calc(33.33% - 10px);
-      max-width:calc(33.33% - 10px);
-      text-align:center; box-sizing:border-box;
+      background: rgba(0,0,0,0.25);
+      color: var(--accent-blue);
+      padding: 8px 14px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.05);
+      flex: 1 1 calc(33.333% - 10px);
+      max-width: calc(33.333% - 10px);
+      text-align: center;
+      word-break: break-word;
     }
+
     .link-item:hover {
-      background:rgba(0,0,0,0.2); color:#66e0ff;
-      text-decoration:underline;
+      background: rgba(0, 204, 255, 0.15);
+      color: #66e0ff;
+      border-color: var(--accent-blue);
     }
-    .category:not(.expanded) .links { display:none }
+
+    .link-item.highlight {
+      background: rgba(255, 153, 0, 0.3) !important;
+      color: #ffffff !important;
+      border-color: var(--accent-orange) !important;
+      font-weight: bold;
+    }
+
+    .category:not(.expanded) .links { display: none; }
+
+    /* Action Bar above categories */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    #toggleAllBtn {
+      background: var(--btn-bg);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      border: 1px solid var(--accent-orange);
+    }
+    #toggleAllBtn:hover { background: var(--accent-orange); color: #111; }
+
+    /* Toast Notification */
     .info-message {
-      background:#4CAF50; color:#fff; padding:10px 20px;
-      border-radius:5px; position:fixed; bottom:20px;
-      left:50%; transform:translateX(-50%);
-      z-index:10000; display:none;
-      box-shadow:0 2px 5px rgba(0,0,0,0.3);
-      font-size:1em;
+      background: #10b981;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      font-size: 1rem;
+      font-weight: 600;
     }
+
+    /* Deal Sites Footer */
     .deal-sites-container {
-      background:#37475A; border-radius:10px;
-      padding:20px; margin:40px auto 20px;
-      width:90%; max-width:800px; text-align:center;
-      box-shadow:0 4px 8px rgba(0,0,0,0.3);
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 24px;
+      margin-top: 50px;
+      border: 1px solid #2e3e52;
     }
-    .deal-sites-container h2 {
-      margin:0 0 20px;
-      border-bottom:1px solid #FF9900;
-      padding-bottom:10px; color:#FF9900;
-    }
-    .deal-site-links {
-      display:flex; flex-wrap:wrap;
-      justify-content:center; gap:15px;
-    }
+    .deal-sites-container h2 { margin: 0 0 16px; color: var(--accent-orange); }
+    .deal-site-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
     .deal-site-links a {
-      background:#111; color:#00ccff;
-      padding:10px 15px; border-radius:6px;
-      text-decoration:none; font-weight:bold;
-      box-shadow:0 2px 5px rgba(0,0,0,0.2);
-      transition:background .2s,color .2s;
+      background: #111;
+      color: var(--accent-blue);
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.2s;
     }
-    .deal-site-links a:hover {
-      background:#FF9900; color:#fff;
-    }
-    #toggleAllCategoriesBtn {
-      background:#37475A; color:#fff;
-      padding:10px 15px; border-radius:6px;
-      cursor:pointer; font-size:1em;
-      margin:20px 0 10px;
-      border:1px solid #FF9900;
-      transition:background .2s,border-color .2s;
-    }
-    #toggleAllCategoriesBtn:hover {
-      background:#FF9900; color:#fff; border-color:#FF9900;
-    }
-    @media(max-width:1024px){
-      .link-item{flex-basis:calc(50% -10px);max-width:calc(50% -10px)}
-      .sticky-header select,.sticky-header button{flex-basis:calc(33.33% -15px);max-width:calc(33.33% -15px)}
-      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0}
-    }
-    @media(max-width:768px){
-      body{font-size:18px;padding-top:180px;padding-bottom:80px}
-      h1{font-size:2em}p{font-size:1.1em}
-      .sticky-header{justify-content:center;padding:10px;height:auto}
-      .sticky-header select,.sticky-header button{flex-basis:calc(50% -10px);max-width:calc(50% -10px);font-size:1.1em}
-      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0;font-size:1.1em}
-      .search-container{margin-top:15px}
-      #searchBox{width:90%;font-size:1.1em}
-      .category h3{font-size:1.3em}
-      .link-item{font-size:1.1em;padding:10px 15px;flex-basis:calc(50% -10px);max-width:calc(50% -10px);margin-bottom:10px}
-      .info-message{font-size:1.1em}
-      .deal-site-links a{width:90%;margin:5px 0}
-    }
-    @media(max-width:480px){
-      body{padding-top:280px}
-      .sticky-header select,.sticky-header button{flex-basis:calc(100% -10px);max-width:calc(100% -10px)}
-      .sticky-header a{flex-basis:auto;max-width:fit-content;min-width:0;font-size:1.1em}
-      .search-container{margin-top:15px}
+    .deal-site-links a:hover { background: var(--accent-orange); color: #111; }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 768px) {
+      .link-item { flex: 1 1 calc(50% - 10px); max-width: calc(50% - 10px); }
+      .search-container { flex-direction: column; }
+      .search-container button { width: 100%; }
+      .sticky-header { padding: 10px; gap: 6px; }
+      .sticky-header select, .sticky-header button, .sticky-header a {
+        font-size: 0.85rem; padding: 6px 10px;
+      }
+      .floating-edge-link { font-size: 0.8rem; padding: 8px 10px; }
     }
   </style>
 </head>
 <body>
+
   <!-- GTM (noscript) -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
-  <!-- /GTN (noscript) -->
 
+  <!-- Always-visible side badge pinned to right edge -->
+  <a href="https://www.amazon.com/vine/resources#vh-monitor" class="floating-edge-link" target="_blank">📖 Help Monitor</a>
+
+  <!-- Sticky Header Controls -->
   <div class="sticky-header">
     <select id="delay">
       <option value="5000">5s Delay</option>
@@ -212,203 +378,203 @@
       <option value="10000">10s Delay</option>
       <option value="random">Random (4–10s)</option>
     </select>
-    <button id="launchAllBtn" onclick="launchAll(this)">Launch All</button>
-    <button id="stopLaunchingBtn" onclick="stopLaunching()" disabled>🛑 Stop Launching</button>
-    <button id="creatorsListBtn" onclick="launchCreatorsList(this)">Creators List</button>
-    <a href="https://www.amazon.com/vine/vine-items?queue=potluck" target="_blank">RFY</a>
-    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" target="_blank">AFA</a>
-    <a href="https://www.amazon.com/vine/vine-items?queue=encore" target="_blank">AI</a>
+
+    <button id="launchAllBtn" class="btn-primary" onclick="launchAll(this)">Launch All Links</button>
+    <button id="stopLaunchingBtn" onclick="stopLaunching()" disabled>🛑 Stop</button>
+    <button id="creatorsListBtn" class="btn-primary" onclick="launchCreatorsList(this)">Creators List</button>
+
+    <a href="https://www.amazon.com/vine/vine-items?queue=potluck" class="queue-link" target="_blank">RFY</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" class="queue-link" target="_blank">AFA</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=encore" class="queue-link" target="_blank">AI</a>
+    <a href="https://www.amazon.com/vine/resources#vh-monitor" class="queue-link" target="_blank">📖 Help Monitor</a>
+
+    <div id="progressBadge">Launching 0 / 0</div>
   </div>
 
-  <div class="search-container">
-    <input
-      type="text"
-      id="searchBox"
-      onkeydown="searchAmazon(event)"
-      placeholder="Search Vine on Amazon…">
-    <button type="button" onclick="searchAmazonClick()">Search</button>
-  </div>
+  <div class="main-container">
+    <h1>Amazon Vine Link Launcher</h1>
+    <p class="subtitle">Select your desired delay, then launch links by category or search term.</p>
 
-  <h1>Amazon Vine Link Launcher</h1>
-  <p><strong>Select your desired delay, then click a category name to launch all its links in new tabs.</strong></p>
-  <p>Use the search box above to quickly search Vine, or use the quick links for RFY, AFA, and AI.</p>
+    <!-- Search Controls -->
+    <div class="search-container">
+      <input
+        type="text"
+        id="searchBox"
+        oninput="handleSearchInput(this.value)"
+        onkeydown="searchAmazonKey(event)"
+        placeholder="Filter page tags or press Enter to search Amazon Vine...">
+      <button type="button" onclick="searchAmazonClick()">Search Vine</button>
+    </div>
 
-  <button id="toggleAllCategoriesBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
-  <div id="categories"></div>
-  <div id="infoMessage"></div>
+    <div class="controls-bar">
+      <button id="toggleAllBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
+    </div>
 
-  <!-- Deal Sites -->
-  <div class="deal-sites-container">
-    <h2>🔗 More Deal Sites</h2>
-    <div class="deal-site-links">
-      <a href="https://www.jungle.deals/"   target="_blank">Jungle.Deals</a>
-      <a href="https://www.dealsea.com/"    target="_blank">Dealsea.com</a>
-      <a href="https://slickdeals.net/"     target="_blank">Slickdeals</a>
-      <a href="https://www.dealnews.com/"   target="_blank">DealNews</a>
-      <a href="https://www.woot.com/"       target="_blank">Woot!</a>
-      <a href="https://www.bradsdeals.com/" target="_blank">Brad's Deals</a>
-      <a href="https://clarkdeals.com/"     target="_blank">ClarkDeals</a>
+    <!-- Dynamic Category Container -->
+    <div id="categories"></div>
+
+    <!-- Deal Sites -->
+    <div class="deal-sites-container">
+      <h2>🔗 More Deal Sites</h2>
+      <div class="deal-site-links">
+        <a href="https://www.jungle.deals/" target="_blank">Jungle.Deals</a>
+        <a href="https://www.dealsea.com/" target="_blank">Dealsea.com</a>
+        <a href="https://slickdeals.net/" target="_blank">Slickdeals</a>
+        <a href="https://www.dealnews.com/" target="_blank">DealNews</a>
+        <a href="https://www.woot.com/" target="_blank">Woot!</a>
+        <a href="https://www.bradsdeals.com/" target="_blank">Brad's Deals</a>
+        <a href="https://clarkdeals.com/" target="_blank">ClarkDeals</a>
+      </div>
     </div>
   </div>
 
+  <div id="infoMessage" class="info-message"></div>
+
   <script>
-    // timeouts etc.
     let pendingTimeouts = [];
     let currentActiveLauncher = null;
+
     const launchAllButton = document.getElementById('launchAllBtn');
     const stopLaunchingButton = document.getElementById('stopLaunchingBtn');
     const creatorsListButton = document.getElementById('creatorsListBtn');
-    const toggleAllCategoriesButton = document.getElementById('toggleAllCategoriesBtn');
+    const toggleAllButton = document.getElementById('toggleAllBtn');
     const infoMessageElement = document.getElementById('infoMessage');
     const container = document.getElementById('categories');
+    const progressBadge = document.getElementById('progressBadge');
 
-    function showInfoMessage(msg,d=3000){
-      infoMessageElement.textContent=msg;
-      infoMessageElement.style.display='block';
-      setTimeout(()=>infoMessageElement.style.display='none',d);
+    function showInfoMessage(msg, duration = 3000) {
+      infoMessageElement.textContent = msg;
+      infoMessageElement.style.display = 'block';
+      setTimeout(() => infoMessageElement.style.display = 'none', duration);
     }
 
-    function searchAmazon(e){
-      if(e.key==='Enter'){
-        let t=document.getElementById('searchBox').value.trim();
-        if(!t){ return showInfoMessage("Please enter a search term.",2000); }
-        let f=encodeURIComponent(t);
-        window.open(`https://www.amazon.com/vine/vine-items?search=${f}`,'_blank');
-        showInfoMessage(`Searching Amazon Vine for "${t}"...`);
-      }
-    }
-    function searchAmazonClick(){
-      let t=document.getElementById('searchBox').value.trim();
-      if(!t){ return showInfoMessage("Please enter a search term.",2000); }
-      let f=encodeURIComponent(t);
-      window.open(`https://www.amazon.com/vine/vine-items?search=${f}`,'_blank');
-      showInfoMessage(`Searching Amazon Vine for "${t}"...`);
-    }
+    // Filter local page tags as user types
+    function handleSearchInput(val) {
+      const query = val.toLowerCase().trim();
+      const links = document.querySelectorAll('.link-item');
 
-    function getDelayValue(){
-      const v=document.getElementById('delay').value;
-      if(v==='random') return Math.floor(Math.random()*(10000-4000+1))+4000;
-      return parseInt(v,10);
-    }
-
-    function launchItems(items,prefix,elem,fixedDelay=null){
-      if(currentActiveLauncher&& currentActiveLauncher!==elem){
-        return showInfoMessage('Another launch sequence is active. Please stop it first.',4000);
-      }
-      if(elem.classList.contains('is-launching')){
-        return stopLaunching();
-      }
-      stopLaunching();
-      currentActiveLauncher=elem;
-      elem.classList.add('is-launching');
-      stopLaunchingButton.disabled=false;
-      launchAllButton.disabled=true;
-      creatorsListButton.disabled=true;
-      toggleAllCategoriesButton.disabled=true;
-      document.querySelectorAll('.category h3')
-        .forEach(h=>{ if(h!==elem){ h.style.pointerEvents='none'; h.style.opacity='0.7' }});
-      showInfoMessage(`${prefix} with delays...`);
-
-      let total=items.length,done=0,delaySum=0;
-      if(total===0){ resetLaunchButtons(); return showInfoMessage('No items to launch.',2000); }
-
-      items.forEach(([_,slug])=>{
-        const url=`https://www.amazon.com/vine/vine-items?search=${slug}`;
-        const d=fixedDelay!==null?fixedDelay:getDelayValue();
-        const id=setTimeout(()=>{
-          window.open(url,'_blank');
-          done++;
-          pendingTimeouts=pendingTimeouts.filter(x=>x!==id);
-          if(done===total){
-            setTimeout(()=>{
-              if(pendingTimeouts.length===0 && currentActiveLauncher===elem){
-                resetLaunchButtons();
-                showInfoMessage('All tabs launched!',2000);
-              }
-            },500);
-          }
-        },delaySum);
-        pendingTimeouts.push(id);
-        delaySum+=d;
-      });
-    }
-
-    function resetLaunchButtons(){
-      pendingTimeouts.forEach(clearTimeout);
-      pendingTimeouts=[];
-      launchAllButton.disabled=false;
-      creatorsListButton.disabled=false;
-      stopLaunchingButton.disabled=true;
-      toggleAllCategoriesButton.disabled=false;
-      launchAllButton.classList.remove('is-launching');
-      creatorsListButton.classList.remove('is-launching');
-      document.querySelectorAll('.category h3').forEach(h=>{
-        h.style.pointerEvents='auto';
-        h.style.opacity='1';
-        h.classList.remove('is-launching');
-        const span=h.querySelector('.launch-instruction');
-        if(span&&span.dataset.original){
-          span.textContent=span.dataset.original;
-          delete span.dataset.original;
+      links.forEach(link => {
+        if (query && link.textContent.toLowerCase().includes(query)) {
+          link.classList.add('highlight');
+        } else {
+          link.classList.remove('highlight');
         }
       });
-      currentActiveLauncher=null;
     }
 
-    function launchAll(btn){
-      const all=Object.values(categories).flat();
-      launchItems(all,'Launching all stored links',btn);
+    function searchAmazonKey(e) {
+      if (e.key === 'Enter') searchAmazonClick();
     }
 
-    function launchCreatorsList(btn){
-      launchItems(creatorsListItems,'Launching Creators List',btn,8000);
+    function searchAmazonClick() {
+      const term = document.getElementById('searchBox').value.trim();
+      if (!term) return showInfoMessage("Please enter a search term.", 2000);
+      const encoded = encodeURIComponent(term);
+      window.open(`https://www.amazon.com/vine/vine-items?search=${encoded}`, '_blank');
+      showInfoMessage(`Searching Amazon Vine for "${term}"...`);
     }
 
-    function stopLaunching(){
-      if(pendingTimeouts.length) showInfoMessage('Tab launching stopped!',2000);
+    function getDelayValue() {
+      const v = document.getElementById('delay').value;
+      if (v === 'random') return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
+      return parseInt(v, 10);
+    }
+
+    // Core Tab Launcher with Visual Counter
+    function launchItems(items, prefix, elem, fixedDelay = null) {
+      if (currentActiveLauncher && currentActiveLauncher !== elem) {
+        return showInfoMessage('Another launch sequence is active. Please stop it first.', 4000);
+      }
+
+      stopLaunching();
+      currentActiveLauncher = elem;
+      stopLaunchingButton.disabled = false;
+      launchAllButton.disabled = true;
+      creatorsListButton.disabled = true;
+
+      showInfoMessage(`${prefix}...`);
+      progressBadge.style.display = 'inline-flex';
+
+      let total = items.length;
+      let done = 0;
+      let delaySum = 0;
+
+      if (total === 0) {
+        resetLaunchButtons();
+        return showInfoMessage('No items to launch.', 2000);
+      }
+
+      progressBadge.textContent = `Launching 0 / ${total}`;
+
+      items.forEach(([_, slug], index) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const d = fixedDelay !== null ? fixedDelay : getDelayValue();
+
+        const id = setTimeout(() => {
+          const win = window.open(url, '_blank');
+          if (!win) {
+            showInfoMessage('Popup blocked! Please allow popups for this site.', 5000);
+          }
+          done++;
+          progressBadge.textContent = `Launching ${done} / ${total}`;
+
+          pendingTimeouts = pendingTimeouts.filter(x => x !== id);
+
+          if (done === total) {
+            setTimeout(() => {
+              if (pendingTimeouts.length === 0) {
+                resetLaunchButtons();
+                showInfoMessage('All tabs launched!', 3000);
+              }
+            }, 500);
+          }
+        }, delaySum);
+
+        pendingTimeouts.push(id);
+        delaySum += d;
+      });
+    }
+
+    function resetLaunchButtons() {
+      pendingTimeouts.forEach(clearTimeout);
+      pendingTimeouts = [];
+      launchAllButton.disabled = false;
+      creatorsListButton.disabled = false;
+      stopLaunchingButton.disabled = true;
+      progressBadge.style.display = 'none';
+      currentActiveLauncher = null;
+    }
+
+    function stopLaunching() {
+      if (pendingTimeouts.length) showInfoMessage('Tab launching stopped!', 2000);
       resetLaunchButtons();
     }
 
-    function toggleAllCategories(){
+    function launchAll(btn) {
+      const all = Object.values(categories).flat();
+      launchItems(all, 'Launching all stored links', btn);
+    }
+
+    function launchCreatorsList(btn) {
+      launchItems(creatorsListItems, 'Launching Creators List', btn, 8000);
+    }
+
+    function toggleAllCategories() {
       stopLaunching();
-      const all=document.querySelectorAll('.category');
-      let any=Array.from(all).some(d=>d.classList.contains('expanded'));
-      if(any){
-        all.forEach(d=>d.classList.remove('expanded'));
-        toggleAllCategoriesButton.textContent='Expand All Categories';
-        showInfoMessage('All categories minimized.',2000);
-      } else {
-        all.forEach(d=>d.classList.add('expanded'));
-        toggleAllCategoriesButton.textContent='Minimize All Categories';
-        showInfoMessage('All categories expanded.',2000);
-      }
+      const all = document.querySelectorAll('.category');
+      const anyExpanded = Array.from(all).some(d => d.classList.contains('expanded'));
+
+      all.forEach(d => {
+        if (anyExpanded) d.classList.remove('expanded');
+        else d.classList.add('expanded');
+      });
+
+      toggleAllButton.textContent = anyExpanded ? 'Expand All Categories' : 'Minimize All Categories';
     }
 
-    function toggleCategory(div){
-      if(!currentActiveLauncher){
-        div.classList.toggle('expanded');
-        if(div.classList.contains('expanded')){
-          div.scrollIntoView({behavior:'smooth',block:'start'});
-        }
-        updateToggleAllCategoriesButtonState();
-      } else if(currentActiveLauncher===div.querySelector('h3')){
-        stopLaunching();
-      } else {
-        showInfoMessage('A launch sequence is active. Please stop it first.',4000);
-      }
-    }
-
-    function updateToggleAllCategoriesButtonState(){
-      const any=Array.from(document.querySelectorAll('.category'))
-        .some(d=>d.classList.contains('expanded'));
-      toggleAllCategoriesButton.textContent=any
-        ?'Minimize All Categories'
-        :'Expand All Categories';
-    }
-
-    // ==== Your full categories object ====
-    const categories={
-      "✨ Zero ETV Focus":[
+    // Categories Dataset
+    const categories = {
+      "✨ Zero ETV Focus": [
         ["Supplements","Supplements"],["Vitamins","Vitamins"],["Gummies","Gummies"],
         ["Shampoo","Shampoo"],["Conditioner","Conditioner"],["Lotion","Lotion"],
         ["Mascara","Mascara"],["Makeup","Makeup"],["Skincare","Skincare"],
@@ -419,66 +585,74 @@
         ["Pet Food","Pet%20Food"],["Pet Treats","Pet%20Treats"],["Diapers","Diapers"],
         ["Wipes","Wipes"],["Lubricant","Lubricant"],["Massager","Massager"]
       ],
-      "🚗 Automotive & Powersports":[
-        ["Camry 2011","Camry%202011"],["Civic 2006","Civic%202006"],
-        ["CR-V 2007","CR-V%202007"],["Express 1500","Express%201500"],
-        ["Dash Cam","Dash%20cam"],["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
-        ["TRX250EX","TRX250EX"],["Sportsman 570","Sportsman%20570"],
-        ["400LTZ","400LTZ"],["LTZ 400","LTZ%20400"],["NHX110","NHX110"],
+      "🚗 Automotive & Powersports": [
+        ["Camry 2011","Camry%202011"],
+        ["CR-V 2026","CR-V%202026"],
+        ["CRV 2026","CRV%202026"],
+        ["CR-V 2007","CR-V%202007"],
+        ["CRV 2007","CRV%202007"],
+        ["Express 1500","Express%201500"],
+        ["Dash Cam","Dash%20cam"],
+        ["Dashcam","Dashcam"],
+        ["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+        ["Sportsman 570","Sportsman%20570"],["NHX110","NHX110"],
         ["Phone Holder","Phone%20holder"],["Car Organizer","Car%20Organizer"],
-        ["Tire Pressure Monitor","Tire%20Pressure%20Monitor"],
+        ["TPMS","TPMS"],["Tire Gauge","Tire%20Gauge"],
         ["Jump Starter Cable","Jump%20Starter%20Cable"],["Car Cover","Car%20Cover"],
         ["Motorcycle Phone Mount","Motorcycle%20Phone%20Mount"],["ATV Winch","ATV%20Winch"],
-        ["Car Cleaning Kit","Car%20Cleaning%20Kit"],["LED Headlight","LED%20Headlight"],
+        ["Car Clean","Car%20Clean"],["Detailing","Detailing"],
+        ["LED Headlight","LED%20Headlight"],
         ["Seat Covers","Seat%20Covers"],["Car Polish","Car%20Polish"]
       ],
-      "🧰 Tools & Home Improvement":[
+      "🧰 Tools & Home Improvement": [
         ["Makita","Makita"],["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],
         ["Smart Plug","Smart%20plug"],["IP68","IP68"],["Electric Kettle","Electric%20Kettle"],
-        ["Smart Lighting","Smart%20Lighting"],["Cookware","Cookware"],["Air Fryer","Air%20Fryer"],
+        ["Smart Lighting","Smart%20Lighting"],["Cookware","Cookware"],
+        ["Air Fryer","Air%20Fryer"],["Airfryer","Airfryer"],
         ["Heated Blanket","Heated%20Blanket"]
       ],
-      "📱 Tech & Electronics":[
-        ["Wireless","Wireless"],["Google 9 XL","Google%209%20XL"],["Robot","Robot"],
+      "📱 Tech & Electronics": [
+        ["Wireless","Wireless"],["Google Pixel 10 XL","Google%20Pixel%2010%20XL"],
+        ["Lexmark","Lexmark"],["Robot","Robot"],
         ["Robotic","Robotic"],["Bluetooth","Bluetooth"],["HDMI","HDMI"],
         ["USB Hub","USB%20Hub"],["Ethernet","Ethernet"],["Keyboard","Keyboard"],
         ["Headphones","Headphones"],["Streaming","Streaming"],
         ["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],["Webcam","Webcam"],
         ["Microphone","Microphone"],["Monitor Stand","Monitor%20Stand"],
-        ["Wi-Fi Extender","Wi%20Fi%20Extender"]
+        ["Wi-Fi Extender","Wi%20Fi%20Extender"],["WiFi","WiFi"]
       ],
-      "🧔 Grooming & Personal Care":[
+      "🧔 Grooming & Personal Care": [
         ["Shaver","Shaver"],["Bald","Bald"],["Hair Dryer","Hair%20Dryer"],
         ["Curling Iron","Curling%20Iron"],["Mascara","Mascara"],
         ["Manicure","Manicure"],["Nail Polish","Nail%20Polish"],
         ["Hair Brush","Hair%20Brush"],["Hair Trimmer","Hair%20Trimmer"],["Beard","Beard"]
       ],
-      "👓 Vision & Eyewear":[
+      "👓 Vision & Eyewear": [
         ["Reading Glasses","Reading%20glasses"],["Readers","Readers"],["Glasses","Glasses"]
       ],
-      "🍬 Health & Wellness":[
+      "🍬 Health & Wellness": [
         ["Gummies","Gummies"],["Multivitamins","Multivitamins"],["Probiotics","Probiotics"],
         ["Sex","Sex"],["Vitamin","Vitamin"],["Protein","Protein"],
         ["Blood Pressure Monitor","Blood%20Pressure%20Monitor"],
         ["Thermometer","Thermometer"],["First Aid","First%20Aid"],["Brace","Brace"]
       ],
-      "☀️ Outdoors & Solar":[
+      "☀️ Outdoors & Solar": [
         ["Solar","Solar"],["Outdoor","Outdoor"],["Zapper","Zapper"],["Seed","Seed"],
         ["Pool","Pool"],["Camping","Camping"],["Hiking","Hiking"],["Cooler","Cooler"]
       ],
-      "🐾 Pet Care":[
+      "🐾 Pet Care": [
         ["Cat Tree","Cat%20Tree"],["Dog Bed","Dog%20Bed"],["Pet Camera","Pet%20Camera"],
         ["Pet Feeder","Pet%20Feeder"],["Water Fountain (Pet)","Water%20Fountain%20Pet"],
         ["Dog Toys","Dog%20Toys"],["Cat Toys","Cat%20Toys"],["Pet Grooming","Pet%20Grooming"],
         ["Poop Bags","Poop%20Bags"]
       ],
-      "👶 Baby & Kids":[
+      "👶 Baby & Kids": [
         ["Baby Monitor","Baby%20Monitor"],["Baby Carrier","Baby%20Carrier"],
         ["Stroller Organizer","Stroller%20Organizer"],["Diaper Bag","Diaper%20Bag"],
         ["Kids Toys","Kids%20Toys"],["Baby Clothes","Baby%20Clothes"],
         ["Infant Seat","Infant%20Seat"],["Baby Gate","Baby%20Gate"]
       ],
-      "🏷️ Name Brands":[
+      "🏷️ Name Brands": [
         ["Sony","Sony"],["Samsung","Samsung"],["LG","LG"],["Apple","Apple"],["Anker","Anker"],
         ["JBL","JBL"],["Bose","Bose"],["Logitech","Logitech"],["Razer","Razer"],
         ["Acer","Acer"],["Asus","Asus"],["TP-Link","TP-Link"],["Netgear","Netgear"],
@@ -489,69 +663,83 @@
         ["Ryobi","Ryobi"],["Kobalt","Kobalt"],["Craftsman","Craftsman"],
         ["Husky","Husky"],["Garmin","Garmin"],["Goodyear","Goodyear"],
         ["Bosch","Bosch"],["Meguiar’s","Meguiar's"],["Rain-X","Rain-X"],
-        ["Thule","Thule"],["WeatherTech","WeatherTech"]
+        ["Thule","Thule"],["WeatherTech","WeatherTech"],["Lexmark","Lexmark"]
       ]
     };
 
-    // Creators list:
-    const creatorsListItems=[
-      ["Camry 2011","Camry%202011"],["Civic 2006","Civic%202006"],
-      ["CR-V 2007","CR-V%202007"],["Express 1500","Express%201500"],
-      ["Dash Cam","Dash%20cam"],["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
-      ["TRX250EX","TRX250EX"],["Sportsman 570","Sportsman%20570"],
-      ["400LTZ","400LTZ"],["LTZ 400","LTZ%20400"],["NHX110","NHX110"],
+    const creatorsListItems = [
+      ["Camry 2011","Camry%202011"],
+      ["CR-V 2026","CR-V%202026"],
+      ["CRV 2026","CRV%202026"],
+      ["CR-V 2007","CR-V%202007"],
+      ["CRV 2007","CRV%202007"],
+      ["Express 1500","Express%201500"],
+      ["Dash Cam","Dash%20cam"],
+      ["Dashcam","Dashcam"],
+      ["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+      ["Sportsman 570","Sportsman%20570"],["NHX110","NHX110"],
       ["Phone Holder","Phone%20holder"],["Tool","Tool"],["Makita","Makita"],
       ["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],["Smart Plug","Smart%20plug"],
-      ["IP68","IP68"],["Wireless","Wireless"],["Google 9 XL","Google%209%20XL"],
-      ["Robot","Robot"],["Robotic","Robotic"],["Bluetooth","Bluetooth"],
-      ["HDMI","HDMI"],["USB Hub","USB%20Hub"],["Ethernet","Ethernet"],
-      ["Keyboard","Keyboard"],["Headphones","Headphones"],["Streaming","Streaming"],
-      ["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],["Beard","Beard"],
-      ["Shaver","Shaver"],["Bald","Bald"],["Reading Glasses","Reading%20glasses"],
-      ["Readers","Readers"],["Glasses","Glasses"],["Hearing Aid","Hearing%20Aid"],
-      ["Gummies","Gummies"],["Multivitamins","Multivitamins"],["Probiotics","Probiotics"],
-      ["Sex","Sex"],["Vitamin","Vitamin"],["Solar","Solar"],["Outdoor","Outdoor"],
-      ["Zapper","Zapper"],["Seed","Seed"],["Pool","Pool"]
+      ["IP68","IP68"],["Wireless","Wireless"],["Google Pixel 10 XL","Google%20Pixel%2010%20XL"],
+      ["Lexmark","Lexmark"],["Robot","Robot"],["Robotic","Robotic"],
+      ["Bluetooth","Bluetooth"],["HDMI","HDMI"],["USB Hub","USB%20Hub"],
+      ["Ethernet","Ethernet"],["Keyboard","Keyboard"],["Headphones","Headphones"],
+      ["Streaming","Streaming"],["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],
+      ["Beard","Beard"],["Shaver","Shaver"],["Bald","Bald"],
+      ["Reading Glasses","Reading%20glasses"],["Readers","Readers"],["Glasses","Glasses"],
+      ["Hearing Aid","Hearing%20Aid"],["Gummies","Gummies"],["Multivitamins","Multivitamins"],
+      ["Probiotics","Probiotics"],["Sex","Sex"],["Vitamin","Vitamin"],
+      ["Solar","Solar"],["Outdoor","Outdoor"],["Zapper","Zapper"],
+      ["Seed","Seed"],["Pool","Pool"]
     ];
 
-    // Build the UI
-    Object.entries(categories).forEach(([title,items])=>{
-      const div=document.createElement('div');
-      div.className='category expanded';
-      const h3=document.createElement('h3');
-      h3.textContent=title;
-      const span=document.createElement('span');
-      span.className='launch-instruction';
-      span.textContent=' [click to launch all]';
-      span.dataset.original=span.textContent;
-      h3.appendChild(span);
-      h3.onclick=e=>{
-        if(h3.classList.contains('is-launching')) return stopLaunching();
-        if(currentActiveLauncher&&currentActiveLauncher!==h3){
-          return showInfoMessage('Another launch is active. Stop it first.',4000);
-        }
-        if(e.target.classList.contains('launch-instruction')){
-          launchItems(items,`Launching all links for "${title}"`,h3);
-        } else {
-          toggleCategory(div);
-        }
+    // Render Categories & Actions
+    Object.entries(categories).forEach(([title, items]) => {
+      const catDiv = document.createElement('div');
+      catDiv.className = 'category expanded';
+
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'category-header';
+
+      const h3 = document.createElement('h3');
+      h3.innerHTML = `<span class="arrow">▶</span> ${title}`;
+
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'category-actions';
+
+      const launchBtn = document.createElement('button');
+      launchBtn.className = 'cat-launch-btn';
+      launchBtn.textContent = `🚀 Launch (${items.length})`;
+      launchBtn.onclick = (e) => {
+        e.stopPropagation();
+        launchItems(items, `Launching ${title}`, launchBtn);
       };
-      div.appendChild(h3);
-      const linksDiv=document.createElement('div');
-      linksDiv.className='links';
-      items.forEach(([lbl,slug])=>{
-        const a=document.createElement('a');
-        a.href=`https://www.amazon.com/vine/vine-items?search=${slug}`;
-        a.target='_blank';
-        a.className='link-item';
-        a.textContent=lbl;
+
+      actionsDiv.appendChild(launchBtn);
+      headerDiv.appendChild(h3);
+      headerDiv.appendChild(actionsDiv);
+
+      headerDiv.onclick = () => {
+        catDiv.classList.toggle('expanded');
+      };
+
+      catDiv.appendChild(headerDiv);
+
+      const linksDiv = document.createElement('div');
+      linksDiv.className = 'links';
+
+      items.forEach(([lbl, slug]) => {
+        const a = document.createElement('a');
+        a.href = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        a.target = '_blank';
+        a.className = 'link-item';
+        a.textContent = lbl;
         linksDiv.appendChild(a);
       });
-      div.appendChild(linksDiv);
-      container.appendChild(div);
-    });
 
-    updateToggleAllCategoriesButtonState();
+      catDiv.appendChild(linksDiv);
+      container.appendChild(catDiv);
+    });
   </script>
 </body>
 </html>
