@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Vine Link Launcher</title>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PHVHKCDP');</script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GZPGM6JQG"></script>
+  <script>
+    window.dataLayer = window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config','G-4GZPGM6JQG');
+  </script>
+
+  <style>
+    :root {
+      --bg-dark: #19222d;
+      --card-bg: #232F3E;
+      --accent-orange: #FF9900;
+      --accent-hover: #e68a00;
+      --accent-blue: #00ccff;
+      --btn-bg: #37475A;
+      --text-main: #ffffff;
+      --text-sub: #d1d5db;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    /* Sticky Header Layout */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: #111111;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-bottom: 2px solid var(--accent-orange);
+    }
+
+    .sticky-header select,
+    .sticky-header button,
+    .sticky-header a {
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sticky-header select {
+      background: var(--accent-orange);
+      color: #111;
+    }
+
+    .sticky-header button.btn-primary {
+      background: var(--accent-orange);
+      color: #111;
+    }
+
+    .sticky-header button.btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    #stopLaunchingBtn {
+      background: #dc2626;
+      color: #fff;
+    }
+    #stopLaunchingBtn:hover { background: #b91c1c; }
+    #stopLaunchingBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .sticky-header a.queue-link {
+      background: var(--btn-bg);
+      color: var(--accent-blue);
+    }
+    .sticky-header a.queue-link:hover {
+      background: #4b5d73;
+      color: #ffffff;
+    }
+
+    /* Floating Edge Button pinned to screen side */
+    .floating-edge-link {
+      position: fixed;
+      right: 0;
+      top: 45%;
+      transform: translateY(-50%);
+      background: var(--accent-orange);
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 8px 0 0 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-decoration: none;
+      z-index: 10000;
+      box-shadow: -3px 4px 12px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+    }
+    .floating-edge-link:hover {
+      background: var(--accent-hover);
+      padding-left: 18px;
+      color: #000;
+    }
+
+    /* Active Progress Display */
+    #progressBadge {
+      display: none;
+      background: #0284c7;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      text-align: center;
+    }
+
+    h1 { color: var(--accent-orange); margin: 20px 0 10px; font-size: 2.2rem; }
+    p.subtitle { color: var(--text-sub); margin-bottom: 20px; font-size: 1rem; }
+
+    /* Search Bar */
+    .search-container {
+      margin: 20px auto 30px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      max-width: 600px;
+    }
+
+    #searchBox {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #4b5d73;
+      background: #2b3848;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #searchBox:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .search-container button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--accent-orange);
+      color: #111;
+      cursor: pointer;
+    }
+    .search-container button:hover { background-color: var(--accent-hover); }
+
+    /* Category Cards */
+    .category {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 1px solid #2e3e52;
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .category-header h3 {
+      margin: 0;
+      color: var(--accent-orange);
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-header .arrow {
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+      color: var(--accent-orange);
+    }
+
+    .category.expanded .arrow { transform: rotate(90deg); }
+
+    .category-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cat-launch-btn {
+      background: #10b981;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cat-launch-btn:hover { background: #059669; }
+
+    /* Link Tags inside Category */
+    .links {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .link-item {
+      background: rgba(0,0,0,0.25);
+      color: var(--accent-blue);
+      padding: 8px 14px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.05);
+      flex: 1 1 calc(33.333% - 10px);
+      max-width: calc(33.333% - 10px);
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .link-item:hover {
+      background: rgba(0, 204, 255, 0.15);
+      color: #66e0ff;
+      border-color: var(--accent-blue);
+    }
+
+    .link-item.highlight {
+      background: rgba(255, 153, 0, 0.3) !important;
+      color: #ffffff !important;
+      border-color: var(--accent-orange) !important;
+      font-weight: bold;
+    }
+
+    .category:not(.expanded) .links { display: none; }
+
+    /* Action Bar above categories */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    #toggleAllBtn {
+      background: var(--btn-bg);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      border: 1px solid var(--accent-orange);
+    }
+    #toggleAllBtn:hover { background: var(--accent-orange); color: #111; }
+
+    /* Toast Notification */
+    .info-message {
+      background: #10b981;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    /* Deal Sites Footer */
+    .deal-sites-container {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 24px;
+      margin-top: 50px;
+      border: 1px solid #2e3e52;
+    }
+    .deal-sites-container h2 { margin: 0 0 16px; color: var(--accent-orange); }
+    .deal-site-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .deal-site-links a {
+      background: #111;
+      color: var(--accent-blue);
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .deal-site-links a:hover { background: var(--accent-orange); color: #111; }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 768px) {
+      .link-item { flex: 1 1 calc(50% - 10px); max-width: calc(50% - 10px); }
+      .search-container { flex-direction: column; }
+      .search-container button { width: 100%; }
+      .sticky-header { padding: 10px; gap: 6px; }
+      .sticky-header select, .sticky-header button, .sticky-header a {
+        font-size: 0.85rem; padding: 6px 10px;
+      }
+      .floating-edge-link { font-size: 0.8rem; padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GTM (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PHVHKCDP" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <!-- Always-visible side badge pinned to right edge -->
+  <a href="https://www.amazon.com/vine/resources#vh-monitor" class="floating-edge-link" target="_blank">📖 Help Monitor</a>
+
+  <!-- Sticky Header Controls -->
+  <div class="sticky-header">
+    <select id="delay">
+      <option value="5000">5s Delay</option>
+      <option value="7000" selected>7s Delay</option>
+      <option value="10000">10s Delay</option>
+      <option value="random">Random (4–10s)</option>
+    </select>
+
+    <button id="launchAllBtn" class="btn-primary" onclick="launchAll(this)">Launch All Links</button>
+    <button id="stopLaunchingBtn" onclick="stopLaunching()" disabled>🛑 Stop</button>
+    <button id="creatorsListBtn" class="btn-primary" onclick="launchCreatorsList(this)">Creators List</button>
+
+    <a href="https://www.amazon.com/vine/vine-items?queue=potluck" class="queue-link" target="_blank">RFY</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=last_chance" class="queue-link" target="_blank">AFA</a>
+    <a href="https://www.amazon.com/vine/vine-items?queue=encore" class="queue-link" target="_blank">AI</a>
+    <a href="https://www.amazon.com/vine/resources#vh-monitor" class="queue-link" target="_blank">📖 Help Monitor</a>
+
+    <div id="progressBadge">Launching 0 / 0</div>
+  </div>
+
+  <div class="main-container">
+    <h1>Amazon Vine Link Launcher</h1>
+    <p class="subtitle">Select your desired delay, then launch links by category or search term.</p>
+
+    <!-- Search Controls -->
+    <div class="search-container">
+      <input
+        type="text"
+        id="searchBox"
+        oninput="handleSearchInput(this.value)"
+        onkeydown="searchAmazonKey(event)"
+        placeholder="Filter page tags or press Enter to search Amazon Vine...">
+      <button type="button" onclick="searchAmazonClick()">Search Vine</button>
+    </div>
+
+    <div class="controls-bar">
+      <button id="toggleAllBtn" onclick="toggleAllCategories()">Minimize All Categories</button>
+    </div>
+
+    <!-- Dynamic Category Container -->
+    <div id="categories"></div>
+
+    <!-- Deal Sites -->
+    <div class="deal-sites-container">
+      <h2>🔗 More Deal Sites</h2>
+      <div class="deal-site-links">
+        <a href="https://www.jungle.deals/" target="_blank">Jungle.Deals</a>
+        <a href="https://www.dealsea.com/" target="_blank">Dealsea.com</a>
+        <a href="https://slickdeals.net/" target="_blank">Slickdeals</a>
+        <a href="https://www.dealnews.com/" target="_blank">DealNews</a>
+        <a href="https://www.woot.com/" target="_blank">Woot!</a>
+        <a href="https://www.bradsdeals.com/" target="_blank">Brad's Deals</a>
+        <a href="https://clarkdeals.com/" target="_blank">ClarkDeals</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="infoMessage" class="info-message"></div>
+
+  <script>
+    let pendingTimeouts = [];
+    let currentActiveLauncher = null;
+
+    const launchAllButton = document.getElementById('launchAllBtn');
+    const stopLaunchingButton = document.getElementById('stopLaunchingBtn');
+    const creatorsListButton = document.getElementById('creatorsListBtn');
+    const toggleAllButton = document.getElementById('toggleAllBtn');
+    const infoMessageElement = document.getElementById('infoMessage');
+    const container = document.getElementById('categories');
+    const progressBadge = document.getElementById('progressBadge');
+
+    function showInfoMessage(msg, duration = 3000) {
+      infoMessageElement.textContent = msg;
+      infoMessageElement.style.display = 'block';
+      setTimeout(() => infoMessageElement.style.display = 'none', duration);
+    }
+
+    // Filter local page tags as user types
+    function handleSearchInput(val) {
+      const query = val.toLowerCase().trim();
+      const links = document.querySelectorAll('.link-item');
+
+      links.forEach(link => {
+        if (query && link.textContent.toLowerCase().includes(query)) {
+          link.classList.add('highlight');
+        } else {
+          link.classList.remove('highlight');
+        }
+      });
+    }
+
+    function searchAmazonKey(e) {
+      if (e.key === 'Enter') searchAmazonClick();
+    }
+
+    function searchAmazonClick() {
+      const term = document.getElementById('searchBox').value.trim();
+      if (!term) return showInfoMessage("Please enter a search term.", 2000);
+      const encoded = encodeURIComponent(term);
+      window.open(`https://www.amazon.com/vine/vine-items?search=${encoded}`, '_blank');
+      showInfoMessage(`Searching Amazon Vine for "${term}"...`);
+    }
+
+    function getDelayValue() {
+      const v = document.getElementById('delay').value;
+      if (v === 'random') return Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
+      return parseInt(v, 10);
+    }
+
+    // Core Tab Launcher with Visual Counter
+    function launchItems(items, prefix, elem, fixedDelay = null) {
+      if (currentActiveLauncher && currentActiveLauncher !== elem) {
+        return showInfoMessage('Another launch sequence is active. Please stop it first.', 4000);
+      }
+
+      stopLaunching();
+      currentActiveLauncher = elem;
+      stopLaunchingButton.disabled = false;
+      launchAllButton.disabled = true;
+      creatorsListButton.disabled = true;
+
+      showInfoMessage(`${prefix}...`);
+      progressBadge.style.display = 'inline-flex';
+
+      let total = items.length;
+      let done = 0;
+      let delaySum = 0;
+
+      if (total === 0) {
+        resetLaunchButtons();
+        return showInfoMessage('No items to launch.', 2000);
+      }
+
+      progressBadge.textContent = `Launching 0 / ${total}`;
+
+      items.forEach(([_, slug], index) => {
+        const url = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        const d = fixedDelay !== null ? fixedDelay : getDelayValue();
+
+        const id = setTimeout(() => {
+          const win = window.open(url, '_blank');
+          if (!win) {
+            showInfoMessage('Popup blocked! Please allow popups for this site.', 5000);
+          }
+          done++;
+          progressBadge.textContent = `Launching ${done} / ${total}`;
+
+          pendingTimeouts = pendingTimeouts.filter(x => x !== id);
+
+          if (done === total) {
+            setTimeout(() => {
+              if (pendingTimeouts.length === 0) {
+                resetLaunchButtons();
+                showInfoMessage('All tabs launched!', 3000);
+              }
+            }, 500);
+          }
+        }, delaySum);
+
+        pendingTimeouts.push(id);
+        delaySum += d;
+      });
+    }
+
+    function resetLaunchButtons() {
+      pendingTimeouts.forEach(clearTimeout);
+      pendingTimeouts = [];
+      launchAllButton.disabled = false;
+      creatorsListButton.disabled = false;
+      stopLaunchingButton.disabled = true;
+      progressBadge.style.display = 'none';
+      currentActiveLauncher = null;
+    }
+
+    function stopLaunching() {
+      if (pendingTimeouts.length) showInfoMessage('Tab launching stopped!', 2000);
+      resetLaunchButtons();
+    }
+
+    function launchAll(btn) {
+      const all = Object.values(categories).flat();
+      launchItems(all, 'Launching all stored links', btn);
+    }
+
+    function launchCreatorsList(btn) {
+      launchItems(creatorsListItems, 'Launching Creators List', btn, 8000);
+    }
+
+    function toggleAllCategories() {
+      stopLaunching();
+      const all = document.querySelectorAll('.category');
+      const anyExpanded = Array.from(all).some(d => d.classList.contains('expanded'));
+
+      all.forEach(d => {
+        if (anyExpanded) d.classList.remove('expanded');
+        else d.classList.add('expanded');
+      });
+
+      toggleAllButton.textContent = anyExpanded ? 'Expand All Categories' : 'Minimize All Categories';
+    }
+
+    // Categories Dataset
+    const categories = {
+      "✨ Zero ETV Focus": [
+        ["Supplements","Supplements"],["Vitamins","Vitamins"],["Gummies","Gummies"],
+        ["Shampoo","Shampoo"],["Conditioner","Conditioner"],["Lotion","Lotion"],
+        ["Mascara","Mascara"],["Makeup","Makeup"],["Skincare","Skincare"],
+        ["Face Mask","Face%20Mask"],["Makeup Brush","Makeup%20Brush"],
+        ["Bandages","Bandages"],["Brace","Brace"],["Reading Glasses","Reading%20glasses"],
+        ["Coffee","Coffee"],["Tea","Tea"],["Snacks","Snacks"],["Ramen","Ramen"],
+        ["Nuts","Nuts"],["Granola","Granola"],["Detergent","Detergent"],
+        ["Pet Food","Pet%20Food"],["Pet Treats","Pet%20Treats"],["Diapers","Diapers"],
+        ["Wipes","Wipes"],["Lubricant","Lubricant"],["Massager","Massager"]
+      ],
+      "🚗 Automotive & Powersports": [
+        ["Camry 2011","Camry%202011"],
+        ["CR-V 2026","CR-V%202026"],
+        ["CRV 2026","CRV%202026"],
+        ["CR-V 2007","CR-V%202007"],
+        ["CRV 2007","CRV%202007"],
+        ["Express 1500","Express%201500"],
+        ["Dash Cam","Dash%20cam"],
+        ["Dashcam","Dashcam"],
+        ["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+        ["Sportsman 570","Sportsman%20570"],["NHX110","NHX110"],
+        ["Phone Holder","Phone%20holder"],["Car Organizer","Car%20Organizer"],
+        ["TPMS","TPMS"],["Tire Gauge","Tire%20Gauge"],
+        ["Jump Starter Cable","Jump%20Starter%20Cable"],["Car Cover","Car%20Cover"],
+        ["Motorcycle Phone Mount","Motorcycle%20Phone%20Mount"],["ATV Winch","ATV%20Winch"],
+        ["Car Clean","Car%20Clean"],["Detailing","Detailing"],
+        ["LED Headlight","LED%20Headlight"],
+        ["Seat Covers","Seat%20Covers"],["Car Polish","Car%20Polish"]
+      ],
+      "🧰 Tools & Home Improvement": [
+        ["Makita","Makita"],["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],
+        ["Smart Plug","Smart%20plug"],["IP68","IP68"],["Electric Kettle","Electric%20Kettle"],
+        ["Smart Lighting","Smart%20Lighting"],["Cookware","Cookware"],
+        ["Air Fryer","Air%20Fryer"],["Airfryer","Airfryer"],
+        ["Heated Blanket","Heated%20Blanket"]
+      ],
+      "📱 Tech & Electronics": [
+        ["Wireless","Wireless"],["Google Pixel 10 XL","Google%20Pixel%2010%20XL"],
+        ["Lexmark","Lexmark"],["Robot","Robot"],
+        ["Robotic","Robotic"],["Bluetooth","Bluetooth"],["HDMI","HDMI"],
+        ["USB Hub","USB%20Hub"],["Ethernet","Ethernet"],["Keyboard","Keyboard"],
+        ["Headphones","Headphones"],["Streaming","Streaming"],
+        ["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],["Webcam","Webcam"],
+        ["Microphone","Microphone"],["Monitor Stand","Monitor%20Stand"],
+        ["Wi-Fi Extender","Wi%20Fi%20Extender"],["WiFi","WiFi"]
+      ],
+      "🧔 Grooming & Personal Care": [
+        ["Shaver","Shaver"],["Bald","Bald"],["Hair Dryer","Hair%20Dryer"],
+        ["Curling Iron","Curling%20Iron"],["Mascara","Mascara"],
+        ["Manicure","Manicure"],["Nail Polish","Nail%20Polish"],
+        ["Hair Brush","Hair%20Brush"],["Hair Trimmer","Hair%20Trimmer"],["Beard","Beard"]
+      ],
+      "👓 Vision & Eyewear": [
+        ["Reading Glasses","Reading%20glasses"],["Readers","Readers"],["Glasses","Glasses"]
+      ],
+      "🍬 Health & Wellness": [
+        ["Gummies","Gummies"],["Multivitamins","Multivitamins"],["Probiotics","Probiotics"],
+        ["Sex","Sex"],["Vitamin","Vitamin"],["Protein","Protein"],
+        ["Blood Pressure Monitor","Blood%20Pressure%20Monitor"],
+        ["Thermometer","Thermometer"],["First Aid","First%20Aid"],["Brace","Brace"]
+      ],
+      "☀️ Outdoors & Solar": [
+        ["Solar","Solar"],["Outdoor","Outdoor"],["Zapper","Zapper"],["Seed","Seed"],
+        ["Pool","Pool"],["Camping","Camping"],["Hiking","Hiking"],["Cooler","Cooler"]
+      ],
+      "🐾 Pet Care": [
+        ["Cat Tree","Cat%20Tree"],["Dog Bed","Dog%20Bed"],["Pet Camera","Pet%20Camera"],
+        ["Pet Feeder","Pet%20Feeder"],["Water Fountain (Pet)","Water%20Fountain%20Pet"],
+        ["Dog Toys","Dog%20Toys"],["Cat Toys","Cat%20Toys"],["Pet Grooming","Pet%20Grooming"],
+        ["Poop Bags","Poop%20Bags"]
+      ],
+      "👶 Baby & Kids": [
+        ["Baby Monitor","Baby%20Monitor"],["Baby Carrier","Baby%20Carrier"],
+        ["Stroller Organizer","Stroller%20Organizer"],["Diaper Bag","Diaper%20Bag"],
+        ["Kids Toys","Kids%20Toys"],["Baby Clothes","Baby%20Clothes"],
+        ["Infant Seat","Infant%20Seat"],["Baby Gate","Baby%20Gate"]
+      ],
+      "🏷️ Name Brands": [
+        ["Sony","Sony"],["Samsung","Samsung"],["LG","LG"],["Apple","Apple"],["Anker","Anker"],
+        ["JBL","JBL"],["Bose","Bose"],["Logitech","Logitech"],["Razer","Razer"],
+        ["Acer","Acer"],["Asus","Asus"],["TP-Link","TP-Link"],["Netgear","Netgear"],
+        ["Corsair","Corsair"],["Dyson","Dyson"],["Shark","Shark"],["iRobot","iRobot"],
+        ["Keurig","Keurig"],["Ninja","Ninja"],["Instant Pot","Instant%20Pot"],
+        ["Eufy","Eufy"],["Tineco","Tineco"],["Philips","Philips"],["Oral-B","Oral-B"],
+        ["DeWalt","DeWalt"],["Milwaukee","Milwaukee"],["Makita","Makita"],
+        ["Ryobi","Ryobi"],["Kobalt","Kobalt"],["Craftsman","Craftsman"],
+        ["Husky","Husky"],["Garmin","Garmin"],["Goodyear","Goodyear"],
+        ["Bosch","Bosch"],["Meguiar’s","Meguiar's"],["Rain-X","Rain-X"],
+        ["Thule","Thule"],["WeatherTech","WeatherTech"],["Lexmark","Lexmark"]
+      ]
+    };
+
+    const creatorsListItems = [
+      ["Camry 2011","Camry%202011"],
+      ["CR-V 2026","CR-V%202026"],
+      ["CRV 2026","CRV%202026"],
+      ["CR-V 2007","CR-V%202007"],
+      ["CRV 2007","CRV%202007"],
+      ["Express 1500","Express%201500"],
+      ["Dash Cam","Dash%20cam"],
+      ["Dashcam","Dashcam"],
+      ["Wiper","Wiper"],["Relay Switch","Relay%20switch"],
+      ["Sportsman 570","Sportsman%20570"],["NHX110","NHX110"],
+      ["Phone Holder","Phone%20holder"],["Tool","Tool"],["Makita","Makita"],
+      ["Tool Kit","Tool%20kit"],["Socket Set","Socket%20set"],["Smart Plug","Smart%20plug"],
+      ["IP68","IP68"],["Wireless","Wireless"],["Google Pixel 10 XL","Google%20Pixel%2010%20XL"],
+      ["Lexmark","Lexmark"],["Robot","Robot"],["Robotic","Robotic"],
+      ["Bluetooth","Bluetooth"],["HDMI","HDMI"],["USB Hub","USB%20Hub"],
+      ["Ethernet","Ethernet"],["Keyboard","Keyboard"],["Headphones","Headphones"],
+      ["Streaming","Streaming"],["iPhone 16 Pro 6.3","iPhone%2016%20Pro%206.3"],
+      ["Beard","Beard"],["Shaver","Shaver"],["Bald","Bald"],
+      ["Reading Glasses","Reading%20glasses"],["Readers","Readers"],["Glasses","Glasses"],
+      ["Hearing Aid","Hearing%20Aid"],["Gummies","Gummies"],["Multivitamins","Multivitamins"],
+      ["Probiotics","Probiotics"],["Sex","Sex"],["Vitamin","Vitamin"],
+      ["Solar","Solar"],["Outdoor","Outdoor"],["Zapper","Zapper"],
+      ["Seed","Seed"],["Pool","Pool"]
+    ];
+
+    // Render Categories & Actions
+    Object.entries(categories).forEach(([title, items]) => {
+      const catDiv = document.createElement('div');
+      catDiv.className = 'category expanded';
+
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'category-header';
+
+      const h3 = document.createElement('h3');
+      h3.innerHTML = `<span class="arrow">▶</span> ${title}`;
+
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'category-actions';
+
+      const launchBtn = document.createElement('button');
+      launchBtn.className = 'cat-launch-btn';
+      launchBtn.textContent = `🚀 Launch (${items.length})`;
+      launchBtn.onclick = (e) => {
+        e.stopPropagation();
+        launchItems(items, `Launching ${title}`, launchBtn);
+      };
+
+      actionsDiv.appendChild(launchBtn);
+      headerDiv.appendChild(h3);
+      headerDiv.appendChild(actionsDiv);
+
+      headerDiv.onclick = () => {
+        catDiv.classList.toggle('expanded');
+      };
+
+      catDiv.appendChild(headerDiv);
+
+      const linksDiv = document.createElement('div');
+      linksDiv.className = 'links';
+
+      items.forEach(([lbl, slug]) => {
+        const a = document.createElement('a');
+        a.href = `https://www.amazon.com/vine/vine-items?search=${slug}`;
+        a.target = '_blank';
+        a.className = 'link-item';
+        a.textContent = lbl;
+        linksDiv.appendChild(a);
+      });
+
+      catDiv.appendChild(linksDiv);
+      container.appendChild(catDiv);
+    });
+  </script>
+</body>
+</html>
